@@ -1,4 +1,5 @@
 %SPectrum added up in the code, not support records with different spectrum
+%Calculate the spectrum changed with time (diff ccd).
 
 clearvars
  solvent='F8T2N2';
