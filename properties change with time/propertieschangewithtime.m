@@ -9,7 +9,7 @@ srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\02252019\dataset intermediates\0'];
 cd (srdir)
 
-allnames=struct2cell(dir([ '*.mat']));
+allnames=struct2cell(dir( '*.mat'));
 [~,len]=size(allnames);
 
 apdintensitycombine=[];
@@ -67,7 +67,7 @@ end
 %%
 edges=430:1:650;intensityedge=min(timeintensity):(max(timeintensity)-min(timeintensity))/100:max(timeintensity);
 int10000=1:100:10000;
-timeavehis=zeros(99,220);timemaxhis=zeros(99,220);timelifetimehis=zeros(99,(2500-50/10);timeintensityhis=zeros(99,100);
+timeavehis=zeros(99,220);timemaxhis=zeros(99,220);timelifetimehis=zeros(99,(2500-50)/10);timeintensityhis=zeros(99,100);
 % timeE0001his=zeros(99,20);
 
 %histogramize
