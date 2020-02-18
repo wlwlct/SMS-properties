@@ -2,7 +2,7 @@
 %wavelength of each moleucle (sum of molecule spectrum without normalization)
 %must not include data that not with same x value.
 clearvars
-solvent='F8T2400nmCH apd removed without consider marker';
+solvent='F8T2400nmCH';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\02252019\dataset intermediates\0'];
 cd (srdir)
@@ -22,7 +22,7 @@ for len_i=1:1:len
     
     Mspectrum(:,1)=datasetfile.dataset.ccdt(:,1);
     Mspectrum(:,1+len_i)=sum(datasetfile.dataset.ccdt(:,3:end),2);
-    Mintensity(1,len_i)=sum(dataset.scatterplot.intensity(:,1));
+    Mintensity(1,len_i)=sum(datasetfile.dataset.scatterplot.intensity(:,1));
     clearvars datasetfile
 end
 %average wavelength for each molecule
