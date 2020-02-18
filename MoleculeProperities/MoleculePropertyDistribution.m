@@ -13,6 +13,7 @@ edges=430:2:650;
 allnames=struct2cell(dir([ '*.mat']));
 [~,len]=size(allnames);
 Mspectrum=zeros(100,len+1);
+Mintensity=zeros(1,len);
 for len_i=1:1:len
     clear name
     name=char(allnames(1,len_i));
@@ -21,6 +22,7 @@ for len_i=1:1:len
     
     Mspectrum(:,1)=datasetfile.dataset.ccdt(:,1);
     Mspectrum(:,1+len_i)=sum(datasetfile.dataset.ccdt(:,3:end),2);
+    Mintensity(1,len_i)=sum(dataset.scatterplot.intensity(:,1));
     clearvars datasetfile
 end
 %average wavelength for each molecule
@@ -54,3 +56,10 @@ saveas(gcf,[solvent ' Molecule Maximum Wavelength Distribution.fig']);
 disp('Save Molecule Maximum Wavelenth successfully /n')
 
 
+figure;
+histogram(Mintensity,min(Mintensity):100:max(Mintensity));
+set(gca,'FontSize',16,'FontWeight','Bold');
+title(['Molecule Intensity Distribution in ' solvent])
+saveas(gcf,[solvent ' Molecule Intensity Distribution.jpg']);
+saveas(gcf,[solvent ' Molecule Intesity Distribution.fig']);
+disp('Save Molecule Intensity successfully /n')
