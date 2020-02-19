@@ -1,12 +1,12 @@
 %Must have same X% Calculate average wavelength, max wavelength, lifetime
 %(choose the first one when calculate in segments), intensity change with
-%Intensity.
+%Intensity. Overall avewav, maxave, lifetime, spectrum(normalized and not normalized.)
 %E0001 is not settled
 
 clearvars
 solvent='F8T2400nmCH';
-%srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8T2400nmCH'];
+srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+%srdir=['E:\F8T2400nmCH'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
@@ -74,23 +74,26 @@ timeavehis=zeros(intensity_leng,220);timemaxhis=zeros(intensity_leng,220);timeli
 
 for intensity_i=1:intensity_leng
     clearvars mol sec 
-    [mol,sec]=find(timeintensity>=intensityedge(1,intensity_i) & timeintensity<intensityedge(1,intensity_i+1));
-    timeavehis(intensity_i,:)=histcounts(timeave(sec,mol),edges);
-    timemaxhis(intensity_i,:)=histcounts(timemax(mol,sec),edges);
-    timelifetimehis(intensity_i,:)=histcounts(timelifetime(sec,mol),50:10:2500);
-    
+    [mol,sec]=find((timeintensity>=intensityedge(1,intensity_i)) & (timeintensity<intensityedge(1,intensity_i+1)));
     sec_leng=length(sec);
+    timemax_prepare=zeros(sec_leng,1); timeave_prepare=zeros(sec_leng,1);timelifetime_prepare=zeros(sec_leng,1);
     for sec_i=1:sec_leng
-        intsp(:,intensity_i)=intsp(:,intensity_i)+sum(timespectrum(:,sec(sec_i,1),mol(sec_i,1)),2);
+        intsp(:,intensity_i)=intsp(:,intensity_i)+timespectrum(:,sec(sec_i,1),mol(sec_i,1));
         intspn(:,intensity_i)=intspn(:,intensity_i)+normalize(timespectrum(:,sec(sec_i,1),mol(sec_i,1)),1,'range');
+        timeave_prepare(sec_i,1)=timeave(sec(sec_i,1),mol(sec_i,1));
+        timemax_prepare(sec_i,1)=timemax(mol(sec_i,1),sec(sec_i,1));
+        timelifetime_prepare(sec_i,1)=timelifetime(sec(sec_i,1),mol(sec_i,1));
     end
+    timeavehis(intensity_i,:)=histcounts(timeave_prepare,edges);
+    timemaxhis(intensity_i,:)=histcounts(timemax_prepare,edges);
+    timelifetimehis(intensity_i,:)=histcounts(timelifetime_prepare,50:10:2500);
 end
 
 try
-    cd([srdir '/intensity change test/']);
+    cd([srdir '/intensity change/']);
 catch
-    mkdir([srdir '/intensity change test/']);
-    cd([srdir '/intensity change test/']);
+    mkdir([srdir '/intensity change/']);
+    cd([srdir '/intensity change/']);
 end
 
 figure
@@ -105,6 +108,27 @@ saveas(gcf,[solvent ' average wavelength change with time.jpg']);
   disp('Save average wavelength change with time successfully /n');
   close all
 
+  figure
+subplot(2,2,1)
+  plot(edges(1,2:end),sum(timeavehis,1),'LineWidth',3);
+  title(['Overall average wavelength distribution ' solvent])
+subplot(2,2,2)
+  plot(edges(1,2:end),sum(timemaxhis,1),'LineWidth',3);
+  title(['Overall max wavelength distribution ' solvent]) 
+subplot(2,2,3)
+  plot(60:10:2500,sum(timelifetimehis,1),'LineWidth',3);
+  title(['Overall lifetime distribution ' solvent]) 
+subplot(2,2,4)
+  yyaxis left; plot(datasetfile.dataset.ccdt(:,1),sum(intsp,2),'LineWidth',3);
+  title(['Overall spectrum add up ' solvent])
+  yyaxis right;plot(datasetfile.dataset.ccdt(:,1),sum(intspn,2),'LineWidth',3);
+  title(['Overall normalized spectrum add up ' solvent])
+saveas(gcf,[solvent ' all add up.jpg']);
+  saveas(gcf,[solvent ' all add up.fig']);
+  disp('Save all add up successfully /n');
+  close all
+
+  
 figure
 subplot(1,2,1)
   surf(edges(1,2:end),intensityedge(1,1:end-1),timemaxhis,'EdgeColor','none');colormap(jet);view([0 0 1]);
