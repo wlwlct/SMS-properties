@@ -186,5 +186,4 @@ saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.fig']);
   disp('Save Spectrum (normalize then add up) change with time successfully /n');
   close all   
-
  
