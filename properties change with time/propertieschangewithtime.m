@@ -40,7 +40,7 @@ for len_i=1:1:len
         timemax(len_i,:)=wavelengthindex;
         %spectrum change with time
         timespectrum=datasetfile.dataset.ccdt(:,3:end)+timespectrum;
-        timespectrum_normalized=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1)+timespectrum;
+        timespectrum_normalized=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1)+timespectrum_normalized;
         %lifetime change with time
         Lifindexremove=[];
         [newconti_leng,~]=size(datasetfile.dataset.newconti);
@@ -93,7 +93,7 @@ end
 figure
 subplot(1,2,1)
   surf(edges(1,2:end),1:1:99,timeavehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['average wavelength change with time ' solvent])
+  title(['Average wavelength change with time ' solvent])
 subplot(1,2,2)
   surf(edges(1,2:end),1:1:99,normalize(timeavehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized average wavelength change with time ' solvent])  
@@ -108,7 +108,7 @@ subplot(1,2,1)
   title(['Maximum Wavelength change with time ' solvent])
 subplot(1,2,2)
   surf(edges(1,2:end),1:1:99,normalize(timemaxhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Maximum wavelength change with time ' solvent])
+  title(['Normalized maximum wavelength change with time ' solvent])
 saveas(gcf,[solvent ' Normalized Maximum change with time.jpg']);
   saveas(gcf,[solvent ' Normalized Maximum change with time.fig']);
   disp('Save Normalized Maximum change with time successfully /n');
@@ -117,7 +117,7 @@ saveas(gcf,[solvent ' Normalized Maximum change with time.jpg']);
 figure
 subplot(1,2,1)
   surf(60:10:2500,1:1:99,timelifetimehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['lifeitme change with time ' solvent])
+  title(['Lifeitme change with time ' solvent])
 subplot(1,2,2)
   surf(60:10:2500,1:1:99,normalize(timelifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized lifeitme change with time ' solvent])
