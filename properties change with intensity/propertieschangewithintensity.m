@@ -110,11 +110,13 @@ saveas(gcf,[solvent ' average wavelength change with time.jpg']);
 
   figure
 subplot(2,2,1)
-  plot(edges(1,2:end),sum(timeavehis,1),'LineWidth',3);
-  title(['Overall average wavelength distribution ' solvent])
-subplot(2,2,2)
   plot(edges(1,2:end),sum(timemaxhis,1),'LineWidth',3);
   title(['Overall max wavelength distribution ' solvent]) 
+  hold on;plot(edges(1,2:end),sum(timeavehis,1),'LineWidth',3);
+  title(['Overall average wavelength distribution ' solvent])
+subplot(2,2,2)
+  histogram(timeintensity,intensityedge);
+  title(['Overall intensity distribution ' solvent])
 subplot(2,2,3)
   plot(60:10:2500,sum(timelifetimehis,1),'LineWidth',3);
   title(['Overall lifetime distribution ' solvent]) 
