@@ -12,19 +12,15 @@ cd (srdir)
 allnames=struct2cell(dir( '*.mat'));
 [~,len]=size(allnames);
 
-apdintensitycombine=[];
-lifetimecombine=[];
-averagewavelengthcombine=[];
-E00wavelengthcombine=[];
 Lifindexremove=[];
    
-timeave=zeros(99,len);
-timemax=zeros(len,99);
-timelifetime=zeros(99,len);
-%timeE0001=zeros(len,99);
-timeintensity=zeros(len,99);
-timespectrum=zeros(100,99,len);
-timespectrum_normalized=zeros(100,99,len);
+intave=zeros(99,len);
+intmax=zeros(len,99);
+intlifetime=zeros(99,len);
+%intE0001=zeros(len,99);
+intintensity=zeros(len,99);
+intspectrum=zeros(100,99,len);
+intspectrum_normalized=zeros(100,99,len);
 place=1;%start to calculate wavelength
 
 for len_i=1:1:len
@@ -34,14 +30,14 @@ for len_i=1:1:len
     disp('Finish load file /n')
     try
         [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
-        %average wavelength change with time%each second,each column
-        timeave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
-        %max wavelength change with time
-        timemax(len_i,:)=datasetfile.dataset.ccdt(maxindex,1);
-        %spectrum change with time
-        timespectrum(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end);
-        timespectrum_normalized(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
-        %lifetime change with time
+        %average wavelength change with int%each second,each column
+        intave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
+        %max wavelength change with int
+        intmax(len_i,:)=datasetfile.dataset.ccdt(maxindex,1);
+        %spectrum change with int
+        intspectrum(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end);
+        intspectrum_normalized(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
+        %lifetime change with int
         [newconti_leng,~]=size(datasetfile.dataset.newconti);
         for newconti_i=1:1:newconti_leng
             [~,co_leng]=size(datasetfile.dataset.newconti(newconti_i).co);
@@ -50,43 +46,43 @@ for len_i=1:1:len
                 Lifindexremove=cat(2,Lifindexremove,preparemove);
             end
         end
-        Lifetime=datasetfile.dataset.scatterplot.lifetime(:,2);
-        Lifetime(Lifindexremove,:)=-1;
-        timelifetime(:,len_i)=Lifetime;
-        %Intensity change with time
-        timeintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
-%         %E0001 Ratio change with time
+        lifetime=datasetfile.dataset.scatterplot.lifetime(:,2);
+        lifetime(Lifindexremove,:)=-1;
+        intlifetime(:,len_i)=lifetime;
+        %Intensity change with int
+        intintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
+%         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
-%         timeE0001(len_i,:)=E00sum./E01sum;
+%         intE0001(len_i,:)=E00sum./E01sum;
     catch
         disp([name 'may not have length 99'])
     end
 end
 
 edges=430:1:650;
-% timeE0001his=zeros(99,20);
+% intE0001his=zeros(99,20);
 
-intensityedge=min(timeintensity(:)):(max(timeintensity(:))-min(timeintensity(:)))/100:max(timeintensity(:));
+intensityedge=min(intintensity(:)):(max(intintensity(:))-min(intintensity(:)))/100:max(intintensity(:));
 intensity_leng=length(intensityedge)-1;
 intsp=zeros(100,intensity_leng);intspn=zeros(100,intensity_leng);
-timeavehis=zeros(intensity_leng,220);timemaxhis=zeros(intensity_leng,220);timelifetimehis=zeros(intensity_leng,(2500-50)/10);timeintensityhis=zeros(intensity_leng,100);
+intavehis=zeros(intensity_leng,220);intmaxhis=zeros(intensity_leng,220);intlifetimehis=zeros(intensity_leng,(2500-50)/10);intintensityhis=zeros(intensity_leng,100);
 
 for intensity_i=1:intensity_leng
     clearvars mol sec 
-    [mol,sec]=find((timeintensity>=intensityedge(1,intensity_i)) & (timeintensity<intensityedge(1,intensity_i+1)));
+    [mol,sec]=find((intintensity>=intensityedge(1,intensity_i)) & (intintensity<intensityedge(1,intensity_i+1)));
     sec_leng=length(sec);
-    timemax_prepare=zeros(sec_leng,1); timeave_prepare=zeros(sec_leng,1);timelifetime_prepare=zeros(sec_leng,1);
+    intmax_prepare=zeros(sec_leng,1); intave_prepare=zeros(sec_leng,1);intlifetime_prepare=zeros(sec_leng,1);
     for sec_i=1:sec_leng
-        intsp(:,intensity_i)=intsp(:,intensity_i)+timespectrum(:,sec(sec_i,1),mol(sec_i,1));
-        intspn(:,intensity_i)=intspn(:,intensity_i)+normalize(timespectrum(:,sec(sec_i,1),mol(sec_i,1)),1,'range');
-        timeave_prepare(sec_i,1)=timeave(sec(sec_i,1),mol(sec_i,1));
-        timemax_prepare(sec_i,1)=timemax(mol(sec_i,1),sec(sec_i,1));
-        timelifetime_prepare(sec_i,1)=timelifetime(sec(sec_i,1),mol(sec_i,1));
+        intsp(:,intensity_i)=intsp(:,intensity_i)+intspectrum(:,sec(sec_i,1),mol(sec_i,1));
+        intspn(:,intensity_i)=intspn(:,intensity_i)+normalize(intspectrum(:,sec(sec_i,1),mol(sec_i,1)),1,'range');
+        intave_prepare(sec_i,1)=intave(sec(sec_i,1),mol(sec_i,1));
+        intmax_prepare(sec_i,1)=intmax(mol(sec_i,1),sec(sec_i,1));
+        intlifetime_prepare(sec_i,1)=intlifetime(sec(sec_i,1),mol(sec_i,1));
     end
-    timeavehis(intensity_i,:)=histcounts(timeave_prepare,edges);
-    timemaxhis(intensity_i,:)=histcounts(timemax_prepare,edges);
-    timelifetimehis(intensity_i,:)=histcounts(timelifetime_prepare,50:10:2500);
+    intavehis(intensity_i,:)=histcounts(intave_prepare,edges);
+    intmaxhis(intensity_i,:)=histcounts(intmax_prepare,edges);
+    intlifetimehis(intensity_i,:)=histcounts(intlifetime_prepare,50:10:2500);
 end
 
 try
@@ -98,27 +94,27 @@ end
 
 figure
 subplot(1,2,1)
-  surf(edges(1,2:end),intensityedge(1,1:end-1),timeavehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['average wavelength change with time ' solvent])
+  surf(edges(1,2:end),intensityedge(1,1:end-1),intavehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['average wavelength change with int ' solvent])
 subplot(1,2,2)
-  surf(edges(1,2:end),intensityedge(1,1:end-1),normalize(timeavehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized average wavelength change with time ' solvent])  
-saveas(gcf,[solvent ' average wavelength change with time.jpg']);
-  saveas(gcf,[solvent ' average wavelength change with time.fig']);
-  disp('Save average wavelength change with time successfully /n');
+  surf(edges(1,2:end),intensityedge(1,1:end-1),normalize(intavehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized average wavelength change with int ' solvent])  
+saveas(gcf,[solvent ' average wavelength change with int.jpg']);
+  saveas(gcf,[solvent ' average wavelength change with int.fig']);
+  disp('Save average wavelength change with int successfully /n');
   close all
 
   figure
 subplot(2,2,1)
-  plot(edges(1,2:end),sum(timemaxhis,1),'LineWidth',3);
+  plot(edges(1,2:end),sum(intmaxhis,1),'LineWidth',3);
   title(['Overall max wavelength distribution ' solvent]) 
-  hold on;plot(edges(1,2:end),sum(timeavehis,1),'LineWidth',3);
+  hold on;plot(edges(1,2:end),sum(intavehis,1),'LineWidth',3);
   title(['Overall average wavelength distribution ' solvent])
 subplot(2,2,2)
-  histogram(timeintensity,intensityedge);
+  histogram(intintensity,intensityedge);
   title(['Overall intensity distribution ' solvent])
 subplot(2,2,3)
-  plot(60:10:2500,sum(timelifetimehis,1),'LineWidth',3);
+  plot(60:10:2500,sum(intlifetimehis,1),'LineWidth',3);
   title(['Overall lifetime distribution ' solvent]) 
 subplot(2,2,4)
   yyaxis left; plot(datasetfile.dataset.ccdt(:,1),sum(intsp,2),'LineWidth',3);
@@ -133,59 +129,59 @@ saveas(gcf,[solvent ' all add up.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(edges(1,2:end),intensityedge(1,1:end-1),timemaxhis,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Maximum Wavelength change with time ' solvent])
+  surf(edges(1,2:end),intensityedge(1,1:end-1),intmaxhis,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Maximum Wavelength change with int ' solvent])
 subplot(1,2,2)
-  surf(edges(1,2:end),intensityedge(1,1:end-1),normalize(timemaxhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Maximum wavelength change with time ' solvent])
-saveas(gcf,[solvent ' Normalized Maximum change with time.jpg']);
-  saveas(gcf,[solvent ' Normalized Maximum change with time.fig']);
-  disp('Save Normalized Maximum change with time successfully /n');
+  surf(edges(1,2:end),intensityedge(1,1:end-1),normalize(intmaxhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized Maximum wavelength change with int ' solvent])
+saveas(gcf,[solvent ' Normalized Maximum change with int.jpg']);
+  saveas(gcf,[solvent ' Normalized Maximum change with int.fig']);
+  disp('Save Normalized Maximum change with int successfully /n');
   close all
   
 figure
 subplot(1,2,1)
-  surf(60:10:2500,intensityedge(1,1:end-1),timelifetimehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['lifeitme change with time ' solvent])
+  surf(60:10:2500,intensityedge(1,1:end-1),intlifetimehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['lifeitme change with int ' solvent])
 subplot(1,2,2)
-  surf(60:10:2500,intensityedge(1,1:end-1),normalize(timelifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized lifeitme change with time ' solvent])
-saveas(gcf,[solvent ' lifetime change with time.jpg']);
-  saveas(gcf,[solvent ' lifetime change with time.fig']);
-  disp('Save lifeitme change with time successfully /n');
+  surf(60:10:2500,intensityedge(1,1:end-1),normalize(intlifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized lifeitme change with int ' solvent])
+saveas(gcf,[solvent ' lifetime change with int.jpg']);
+  saveas(gcf,[solvent ' lifetime change with int.fig']);
+  disp('Save lifeitme change with int successfully /n');
   close all
     
 % figure
-% surf(0.05:0.05:1,1:1:99,timeE0001his,'EdgeColor','none');
+% surf(0.05:0.05:1,1:1:99,intE0001his,'EdgeColor','none');
 % colormap(jet)
 % view([0 0 1])
-%   title(['E0001R change with time ' solvent])
-%   saveas(gcf,[solvent ' E0001R change with time.jpg']);
-%   saveas(gcf,[solvent ' E0001R change with time.fig']);
-%   disp('Save E0001R change with time successfully /n');
+%   title(['E0001R change with int ' solvent])
+%   saveas(gcf,[solvent ' E0001R change with int.jpg']);
+%   saveas(gcf,[solvent ' E0001R change with int.fig']);
+%   disp('Save E0001R change with int successfully /n');
 %   close all  
   
 figure
 subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Spectrum (add up) change with time ' solvent])
+  title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),normalize(intsp,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Spectrum (add up) change with time ' solvent])
-saveas(gcf,[solvent ' Spectrum (add up) change with time.jpg']);
-  saveas(gcf,[solvent ' Spectrum (add up) change with time.fig']);
-  disp('Save Spectrum (add up) change with time successfully /n');
+  title(['Normalized Spectrum (add up) change with int ' solvent])
+saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
+  saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
+  disp('Save Spectrum (add up) change with int successfully /n');
   close all  
   
 figure
 subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn,'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Spectrum (normalize then add up) change with time ' solvent])
+  title(['Spectrum (normalize then add up) change with int ' solvent])
 subplot(1,2,2)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),normalize(intspn,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Spectrum (normalize then add up) change with time ' solvent])
-saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.jpg']);
-  saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.fig']);
-  disp('Save Spectrum (normalize then add up) change with time successfully /n');
+  title(['Normalized Spectrum (normalize then add up) change with int ' solvent])
+saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
+  saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.fig']);
+  disp('Save Spectrum (normalize then add up) change with int successfully /n');
   close all   
  
