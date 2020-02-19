@@ -65,7 +65,7 @@ for len_i=1:1:len
     end
 end
 %%
-edges=430:1:650;intensityedge=min(timeintensity):(max(timeintensity)-min(timeintensity))/100:max(timeintensity);
+edges=430:1:650;intensityedge=min(timeintensity(:)):(max(timeintensity(:))-min(timeintensity(:)))/100:max(timeintensity(:));
 int10000=1:100:10000;
 timeavehis=zeros(99,220);timemaxhis=zeros(99,220);timelifetimehis=zeros(99,(2500-50)/10);timeintensityhis=zeros(99,100);
 % timeE0001his=zeros(99,20);
@@ -116,10 +116,10 @@ saveas(gcf,[solvent ' Normalized Maximum change with time.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(80:10:2500,1:1:99,timelifetimehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(60:10:2500,1:1:99,timelifetimehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['lifeitme change with time ' solvent])
 subplot(1,2,2)
-  surf(80:10:2500,1:1:99,normalize(timelifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(60:10:2500,1:1:99,normalize(timelifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized lifeitme change with time ' solvent])
 saveas(gcf,[solvent ' lifetime change with time.jpg']);
   saveas(gcf,[solvent ' lifetime change with time.fig']);
