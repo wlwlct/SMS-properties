@@ -6,7 +6,7 @@
 clearvars
 solvent='F8T2400nmCH';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\02252019\dataset intermediates\0'];
+%srdir=['E:\F8T2400nmCH'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
@@ -22,7 +22,8 @@ timemax=zeros(len,99);
 timelifetime=zeros(99,len);
 timeE0001=zeros(len,99);
 timeintensity=zeros(len,99);
-timespectrum=zeros(100,99);   
+timespectrum=zeros(100,99);  
+timespectrum_normalized=zeros(100,99);   
 place=1;%start to calculate wavelength
 
 for len_i=1:1:len
