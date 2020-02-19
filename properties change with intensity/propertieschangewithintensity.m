@@ -5,8 +5,8 @@
 
 clearvars
 solvent='F8T2400nmCH';
-%srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8T2400nmCH'];
+srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+%srdir=['E:\F8T2400nmCH'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
