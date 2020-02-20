@@ -76,7 +76,7 @@ for intensity_i=1:intensity_leng
     intmax_prepare=zeros(sec_leng,1); intave_prepare=zeros(sec_leng,1);intlifetime_prepare=zeros(sec_leng,1);
     for sec_i=1:sec_leng
         intsp(:,intensity_i)=intsp(:,intensity_i)+intspectrum(:,sec(sec_i,1),mol(sec_i,1));
-        intspn(:,intensity_i)=intspn(:,intensity_i)+normalize(intspectrum(:,sec(sec_i,1),mol(sec_i,1)),1,'range');
+        intspn(:,intensity_i)=intspn(:,intensity_i)+intspectrum_normalized(:,sec(sec_i,1),mol(sec_i,1));
         intave_prepare(sec_i,1)=intave(sec(sec_i,1),mol(sec_i,1));
         intmax_prepare(sec_i,1)=intmax(mol(sec_i,1),sec(sec_i,1));
         intlifetime_prepare(sec_i,1)=intlifetime(sec(sec_i,1),mol(sec_i,1));
@@ -167,7 +167,7 @@ subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),normalize(intsp,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp/max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
@@ -179,7 +179,7 @@ subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (normalize then add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),normalize(intspn,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn/max(intspn(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (normalize then add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.fig']);
