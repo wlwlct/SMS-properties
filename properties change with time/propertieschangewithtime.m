@@ -4,7 +4,7 @@
 %E0001 is not settled
 
 clearvars
-solvent='F8T2400nmCH';
+solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\F8T2400nmCH'];
 cd (srdir)
@@ -24,7 +24,8 @@ timeE0001=zeros(len,99);
 timeintensity=zeros(len,99);
 timespectrum=zeros(100,99);  
 timespectrum_normalized=zeros(100,99);   
-place=1;%start to calculate wavelength
+place=22;%start to calculate wavelength
+edges=450:1:670;
 
 for len_i=1:1:len
     clear name
@@ -34,7 +35,7 @@ for len_i=1:1:len
     try
         
         [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
-        wavelengthindex=datasetfile.dataset.ccdt(maxindex,1);
+        wavelengthindex=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %average wavelength change with time%each second,each column
         timeave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
         %max wavelength change with time
@@ -66,7 +67,7 @@ for len_i=1:1:len
     end
 end
 %%
-edges=430:1:650;intensityedge=min(timeintensity(:)):(max(timeintensity(:))-min(timeintensity(:)))/100:max(timeintensity(:));
+intensityedge=min(timeintensity(:)):(max(timeintensity(:))-min(timeintensity(:)))/100:max(timeintensity(:));
 int10000=1:100:10000;
 timeavehis=zeros(99,220);timemaxhis=zeros(99,220);timelifetimehis=zeros(99,(2500-50)/10);timeintensityhis=zeros(99,100);
 % timeE0001his=zeros(99,20);
