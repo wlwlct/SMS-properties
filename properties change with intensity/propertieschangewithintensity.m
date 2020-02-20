@@ -4,7 +4,7 @@
 %E0001 is not settled
 
 clearvars
-solvent='F8T2400nmCH';
+solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\F8T2400nmCH'];
 cd (srdir)
@@ -21,7 +21,8 @@ intlifetime=zeros(99,len);
 intintensity=zeros(len,99);
 intspectrum=zeros(100,99,len);
 intspectrum_normalized=zeros(100,99,len);
-place=1;%start to calculate wavelength
+place=22;%start to calculate wavelength
+edges=450:1:670;
 
 for len_i=1:1:len
     clear name
@@ -33,7 +34,7 @@ for len_i=1:1:len
         %average wavelength change with int%each second,each column
         intave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
         %max wavelength change with int
-        intmax(len_i,:)=datasetfile.dataset.ccdt(maxindex,1);
+        intmax(len_i,:)=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %spectrum change with int
         intspectrum(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end);
         intspectrum_normalized(:,:,len_i)=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
@@ -60,7 +61,7 @@ for len_i=1:1:len
     end
 end
 
-edges=430:1:650;
+%edges=430:1:650;
 % intE0001his=zeros(99,20);
 
 intensityedge=min(intintensity(:)):(max(intintensity(:))-min(intintensity(:)))/100:max(intintensity(:));
