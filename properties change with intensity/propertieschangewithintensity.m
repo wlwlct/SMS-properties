@@ -6,7 +6,7 @@
 clearvars
 solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2400nmCH'];
+%srdir=['E:\F8T2O2'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
@@ -167,7 +167,7 @@ subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp/max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp./max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
@@ -179,7 +179,7 @@ subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (normalize then add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn/max(intspn(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn./max(intspn(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (normalize then add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.fig']);
