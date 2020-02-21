@@ -66,6 +66,7 @@ end
 % intE0001his=zeros(99,20);
 
 intensityedge=min(intintensity(:)):(max(intintensity(:))-min(intintensity(:)))/100:max(intintensity(:));
+intensityedge(1,end)=intensityedge(1,end)+1;%include the last element
 intensity_leng=length(intensityedge)-1;
 intsp=zeros(100-place+1,intensity_leng);intspn=zeros(100-place+1,intensity_leng);
 intavehis=zeros(intensity_leng,220);intmaxhis=zeros(intensity_leng,220);intlifetimehis=zeros(intensity_leng,(2500-50)/10);intintensityhis=zeros(intensity_leng,100);
