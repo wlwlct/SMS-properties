@@ -164,10 +164,10 @@ saveas(gcf,[solvent ' lifetime change with int.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intsp(place:end,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intsp./max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intsp./max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
@@ -176,10 +176,10 @@ saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intspn(place:end,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (normalize then add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(:,1),intspn./max(intspn(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intspn(palce:end,:)./max(intspn(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (normalize then add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.fig']);
