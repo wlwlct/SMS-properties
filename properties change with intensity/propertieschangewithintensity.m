@@ -167,7 +167,7 @@ subplot(1,2,1)
   surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intsp(place:end,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intsp./max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),intsp(place:end,:)./max(intsp(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with int ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
