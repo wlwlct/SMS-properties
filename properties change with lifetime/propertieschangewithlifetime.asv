@@ -6,11 +6,11 @@
 clearvars
 solvent='F8T2O2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2O2'];
+srdir=['E:\F8T2O2'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
-[~,len]=size(allnames);
+[~,len]=size(allnames);len=5;
 
 Lifindexremove=[];
    
@@ -123,11 +123,11 @@ subplot(1,2,1)
   surf(intensity_edge(2:end),lifetimeedge(1,1:end-1),lifeintensityhis,'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['lifeitme change with int ' solvent])
 subplot(1,2,2)
-  surf(intensity_edge(2:end),lifetimeedge(1,1:end-1),normalize(lifeintensityhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized lifeitme change with lifetime ' solvent])
-saveas(gcf,[solvent ' lifetime change with lifetime.jpg']);
-  saveas(gcf,[solvent ' lifetime change with lifetime.fig']);
-  disp('Save lifeitme change with lifetime successfully /n');
+  surf(intensity_edge(,lifetimeedge(1,1:end-1),normalize(lifeintensityhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized lifeitme change with int ' solvent])
+saveas(gcf,[solvent ' lifetime change with int.jpg']);
+  saveas(gcf,[solvent ' lifetime change with int.fig']);
+  disp('Save lifeitme change with int successfully /n');
   close all
     
 % figure
@@ -142,25 +142,25 @@ saveas(gcf,[solvent ' lifetime change with lifetime.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(lifetimeedge(1,1:end),datasetfile.dataset.ccdt(place:end,1),[lifesp(:,:) zeros(100-place+1,1)],'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Spectrum (add up) change with lifetime ' solvent])
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),lifesp(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Spectrum (add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(lifetimeedge(1,1:end),datasetfile.dataset.ccdt(place:end,1),normalize([lifesp(:,:) zeros(100-place+1,1)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Spectrum (add up) change with lifetime ' solvent])
-saveas(gcf,[solvent ' Spectrum (add up) change with lifetime.jpg']);
-  saveas(gcf,[solvent ' Spectrum (add up) change with lifetime.fig']);
-  disp('Save Spectrum (add up) change with lifetime successfully /n');
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),normalize(lifesp(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized Spectrum (add up) change with int ' solvent])
+saveas(gcf,[solvent ' Spectrum (add up) change with int.jpg']);
+  saveas(gcf,[solvent ' Spectrum (add up) change with int.fig']);
+  disp('Save Spectrum (add up) change with int successfully /n');
   close all  
   
 figure
 subplot(1,2,1)
-  surf(lifetimeedge(1,1:end),datasetfile.dataset.ccdt(place:end,1),[lifespn(:,:) zeros(100-place+1,1)],'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Spectrum (normalize then add up) change with lifetime ' solvent])
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),lifespn(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Spectrum (normalize then add up) change with int ' solvent])
 subplot(1,2,2)
-  surf(lifetimeedge(1,1:end),datasetfile.dataset.ccdt(place:end,1),normalize([lifespn(:,:) zeros(100-place+1,1)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized Spectrum (normalize then add up) change with lifetime ' solvent])
-saveas(gcf,[solvent ' Spectrum (normalize then add up) change with lifetime.jpg']);
-  saveas(gcf,[solvent ' Spectrum (normalize then add up) change with lifetime.fig']);
-  disp('Save Spectrum (normalize then add up) change with lifetime successfully /n');
+  surf(intensityedge(1,1:end-1),datasetfile.dataset.ccdt(place:end,1),normalize(lifespn(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized Spectrum (normalize then add up) change with int ' solvent])
+saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
+  saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.fig']);
+  disp('Save Spectrum (normalize then add up) change with int successfully /n');
   close all   
  
