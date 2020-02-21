@@ -1,7 +1,5 @@
-%Must have same X% Calculate average wavelength, max wavelength, lifetime
-%(choose the first one when calculate in segments), intensity change with
-%Intensity. Overall avewav, maxave, lifetime, spectrum(normalized and not normalized.)
-%E0001 is not settled
+%Must have same X% Calculate average wavelength, max wavelength,  intensity change with
+%lifetime. %E0001 is not settled
 
 clearvars
 solvent='F8T2O2';
