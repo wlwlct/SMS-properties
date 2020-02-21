@@ -22,9 +22,10 @@ timemax=zeros(len,99);
 timelifetime=zeros(99,len);
 timeE0001=zeros(len,99);
 timeintensity=zeros(len,99);
-timespectrum=zeros(100,99);  
-timespectrum_normalized=zeros(100,99);   
 place=22;%start to calculate wavelength
+timespectrum=zeros(100-place+1,99);  
+timespectrum_normalized=zeros(100-place+1,99);   
+
 edges=450:1:670;
 
 for len_i=1:1:len
@@ -41,8 +42,8 @@ for len_i=1:1:len
         %max wavelength change with time
         timemax(len_i,:)=wavelengthindex;
         %spectrum change with time
-        timespectrum=datasetfile.dataset.ccdt(:,3:end)+timespectrum;
-        timespectrum_normalized=datasetfile.dataset.ccdt(:,3:end)./max(datasetfile.dataset.ccdt(place:end,3:end),[],1)+timespectrum_normalized;
+        timespectrum=datasetfile.dataset.ccdt(place:end,3:end)+timespectrum;
+        timespectrum_normalized=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range')+timespectrum_normalized;
         %lifetime change with time
         Lifindexremove=[];
         [newconti_leng,~]=size(datasetfile.dataset.newconti);
@@ -152,10 +153,10 @@ saveas(gcf,[solvent ' Intensity change with time.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum(place:end,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with time ' solvent])
 subplot(1,2,2)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum(place:end,:)./max(timespectrum(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),normalize(timespectrum(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with time ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with time.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with time.fig']);
@@ -164,10 +165,10 @@ saveas(gcf,[solvent ' Spectrum (add up) change with time.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum_normalized(place:end,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum_normalized(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (normalize then add up) change with time ' solvent])
 subplot(1,2,2)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum_normalized(place:end,:)./max(timespectrum_normalized(place:end,:),[],1),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),normalize(timespectrum_normalized(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (normalize then add up) change with time ' solvent])
 saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.fig']);
