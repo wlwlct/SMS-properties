@@ -100,11 +100,18 @@ Finish load file /n
 Finish load file /n
 Finish load file /n
 Finish load file /n
+Finish load file /n
+Finish load file /n
+Finish load file /n
+Finish load file /n
+Finish load file /n
+Finish load file /n
+Finish load file /n
 Save average wavelength change with time successfully /n
-Save E00 change with time successfully /n
+Save Normalized Maximum change with time successfully /n
 Save lifeitme change with time successfully /n
 Save Intensity change with time successfully /n
-Save E0001R change with time successfully /n
 Save Spectrum (add up) change with time successfully /n
+Save Spectrum (normalize then add up) change with time successfully /n
 Save Intensity 10000 change with time successfully /n
 Save Intensity plot change with time successfully /n

@@ -8,5 +8,5 @@
 #SBATCH -e error.err
 #SBATCH -o Coutput.out
 module load matlab
-matlab -singleCompThread -nodisplay -nosplash -r propertieschangewithtime
+matlab -singleCompThread -nodisplay -nosplash -r propertieschangewithintensity
 ##-nojvm

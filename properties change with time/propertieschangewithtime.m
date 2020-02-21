@@ -4,7 +4,7 @@
 %E0001 is not settled
 
 clearvars
-solvent='F8T2N2';
+solvent='F8T2O2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\F8T2400nmCH'];
 cd (srdir)
