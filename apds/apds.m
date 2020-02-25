@@ -3,7 +3,7 @@ clearvars
 codefolder=pwd;
 solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8T2400nmCH'];
+srdir=['E:\F8T2N2'];
 cd (srdir)
 
 
@@ -16,8 +16,8 @@ for len_i=1:1:len
     rowrange=datasetfile.dataset.rowrange;clearvars datasetfile
     disp('Finish load rowrange /n')    
     
-    date=regexp(datasetname,'02\d*2020','match');
-    file=regexp(datasetname,'\dd\dd\d*','match');
+    date=regexp(datasetname,'\d*2019','match');
+    file=regexp(datasetname,'\dd\dd\dd\d*','match');
     
     cd([srdir '\apd full'])
     apdfile=dir(['*' date{1} '*' file{1} '.mat']);
@@ -55,6 +55,6 @@ for len_i=1:1:len
     end
     
 cd([srdir '\apd full'])
-save(['F8T2 Chloroform 2kDa 400nm ' date{1} ' SecDtime ' file{1} '.mat'],'SecDtime');   
+save(['F8T2 Chloroform 2kDa N2 ' date{1} ' SecDtime ' file{1} '.mat'],'SecDtime');   
     
 end
