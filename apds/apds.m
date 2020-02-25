@@ -42,19 +42,19 @@ for len_i=1:1:len
     end
     
     
-    SecDtime=cell(total_rowrange_leng,1);flag=1;
+    SecDtime=cell(total_rowrange_leng,3);flag=1;
     rowrange_leng=length(rowrange);
     for rowrange_i=1:rowrange_leng
        rowrange_rr_leng=length(rowrange(rowrange_i).rr(1,:));
        for rowrange_rr_i=1:rowrange_rr_leng
            SecDtime{flag,1}=dtime(rowrange(rowrange_i).rr(1,rowrange_rr_i):rowrange(rowrange_i).rr(2,rowrange_rr_i),1);
-           %SecDtime{flag,2}=histcounts(SecDtime{flag,1},1:6252);
+           SecDtime{flag,2}=histcounts(SecDtime{flag,1},1:6252);
+           SecDtime{flag,3}=length(SecDtime{flag,1});
            flag=flag+1;
        end
     end
     
 cd([srdir '\apd full'])
 save(['F8T2 Chloroform 2kDa 400nm ' date{1} ' SecDtime ' file{1} '.mat'],'SecDtime');   
-
     
 end
