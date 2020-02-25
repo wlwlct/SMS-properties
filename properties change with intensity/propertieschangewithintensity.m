@@ -6,7 +6,7 @@
 clearvars
 solvent='F8T2O2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2O2'];
+%srdir=['E:\F8T2400nmCH\'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
@@ -22,6 +22,7 @@ intintensity=zeros(len,99);
 place=22;%start to calculate wavelength
 intspectrum=zeros(100-place+1,99,len);
 intspectrum_normalized=zeros(100-place+1,99,len);
+SecDtimeintensity=cell(99,len);
 edges=450:1:670;
 
 for len_i=1:1:len
@@ -29,6 +30,13 @@ for len_i=1:1:len
     name=char(allnames(1,len_i));
     datasetfile=load([srdir '/' name]);
     disp('Finish load file /n')
+    
+    date=regexp(name,'02\d*2020','match');
+    file=regexp(name,'\dd\dd\d*','match');
+    cd([srdir '/apd full'])
+    Secfile=dir(['*' date{1} '*SecDtime*' file{1} '.mat']);
+    SecDtime=importdata(Secfile.name);
+    
     try
         [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
         %average wavelength change with int%each second,each column
@@ -52,6 +60,8 @@ for len_i=1:1:len
         intlifetime(:,len_i)=lifetime;
         %Intensity change with int
         intintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
+        %dtime change with int
+        SecDtimeintensity(:,len_i)=SecDtime(1:99,2);
 %         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
@@ -70,6 +80,7 @@ intensityedge(1,end)=intensityedge(1,end)+1;%include the last element
 intensity_leng=length(intensityedge)-1;
 intsp=zeros(100-place+1,intensity_leng);intspn=zeros(100-place+1,intensity_leng);
 intavehis=zeros(intensity_leng,220);intmaxhis=zeros(intensity_leng,220);intlifetimehis=zeros(intensity_leng,(2500-50)/10);intintensityhis=zeros(intensity_leng,100);
+intSecDtime=zeros(6251,intensity_leng);
 
 for intensity_i=1:intensity_leng
     clearvars mol sec 
@@ -82,6 +93,7 @@ for intensity_i=1:intensity_leng
         intave_prepare(sec_i,1)=intave(sec(sec_i,1),mol(sec_i,1));
         intmax_prepare(sec_i,1)=intmax(mol(sec_i,1),sec(sec_i,1));
         intlifetime_prepare(sec_i,1)=intlifetime(sec(sec_i,1),mol(sec_i,1));
+        intSecDtime(:,intensity_i)=intSecDtime(:,intensity_i)+transpose(SecDtimeintensity{sec(sec_i,1),mol(sec_i,1)});
     end
     intavehis(intensity_i,:)=histcounts(intave_prepare,edges);
     intmaxhis(intensity_i,:)=histcounts(intmax_prepare,edges);
@@ -188,3 +200,16 @@ saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
   disp('Save Spectrum (normalize then add up) change with int successfully /n');
   close all   
  
+figure
+subplot(1,2,1)
+  surf(intensityedge(1,1:end-1),(1:6251)*8/1000,intSecDtime,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  ylim([0 8])
+  title(['Lifetime curve change with int ' solvent])
+subplot(1,2,2)
+  surf(intensityedge(1,1:end-1),(1:6251)*8/1000,normalize(intSecDtime,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  ylim([0 8])
+  title(['Normalized lifetime curve change with int ' solvent])
+saveas(gcf,[solvent ' Normalized lifetime curve change with int.jpg']);
+  saveas(gcf,[solvent ' Normalized lifetime curve change with int.fig']);
+  disp('Normalized lifetime curve change with int successfully /n');
+  close all   
