@@ -202,11 +202,11 @@ saveas(gcf,[solvent ' Spectrum (normalize then add up) change with int.jpg']);
  
 figure
 subplot(1,2,1)
-  surf(intensityedge(1,1:end-1),(1:6251)*8/1000,intSecDtime,'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end),(1:6251)*8/1000,[intSecDtime zeros(6251,1)],'EdgeColor','none');colormap(jet);view([0 0 1]);
   ylim([0 8])
   title(['Lifetime curve change with int ' solvent])
 subplot(1,2,2)
-  surf(intensityedge(1,1:end-1),(1:6251)*8/1000,normalize(intSecDtime,1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(intensityedge(1,1:end),(1:6251)*8/1000,normalize([intSecDtime zeros(6251,1)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   ylim([0 8])
   title(['Normalized lifetime curve change with int ' solvent])
 saveas(gcf,[solvent ' Normalized lifetime curve change with int.jpg']);
