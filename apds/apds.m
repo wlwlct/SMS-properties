@@ -17,9 +17,9 @@ for len_i=1:1:len
     disp('Finish load rowrange /n')    
     
     date=regexp(datasetname,'\d*2019','match');
-    file=regexp(datasetname,'\dd\dd\dd\d*','match');
+    file=regexp(datasetname,'\dd\dd\d*','match');
     
-    cd([srdir '\apd full'])
+    cd([srdir '\apd full\New folder'])
     apdfile=dir(['*' date{1} '*' file{1} '.mat']);
     if isempty(apdfile)
         disp(['Wrong apd related to' datasetfile])
@@ -54,7 +54,7 @@ for len_i=1:1:len
        end
     end
     
-cd([srdir '\apd full'])
+cd([srdir '\apd full\New folder'])
 save(['F8T2 Chloroform 2kDa N2 ' date{1} ' SecDtime ' file{1} '.mat'],'SecDtime');   
     
 end
