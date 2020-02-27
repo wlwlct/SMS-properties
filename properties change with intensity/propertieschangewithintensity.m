@@ -24,6 +24,7 @@ intspectrum=zeros(100-place+1,99,len);
 intspectrum_normalized=zeros(100-place+1,99,len);
 SecDtimeintensity=cell(99,len);
 edges=450:1:670;
+year='2019';
 
 for len_i=1:1:len
     clear name
@@ -31,7 +32,7 @@ for len_i=1:1:len
     datasetfile=load([srdir '/' name]);
     disp('Finish load file /n')
     
-    date=regexp(name,'\d*2019','match');
+    date=regexp(name,['\d*' year],'match');
     file=regexp(name,'\dd\dd\d*','match');
     cd([srdir '/apd full'])
     Secfile=dir(['*' date{1} '*SecDtime*' file{1} '.mat']);
