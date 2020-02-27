@@ -4,7 +4,7 @@
 %E0001 is not settled
 
 clearvars
-solvent='F8T2O2';
+solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\F8T2400nmCH\'];
 cd (srdir)
@@ -31,7 +31,7 @@ for len_i=1:1:len
     datasetfile=load([srdir '/' name]);
     disp('Finish load file /n')
     
-    date=regexp(name,'02\d*2020','match');
+    date=regexp(name,'\d*2019','match');
     file=regexp(name,'\dd\dd\d*','match');
     cd([srdir '/apd full'])
     Secfile=dir(['*' date{1} '*SecDtime*' file{1} '.mat']);
