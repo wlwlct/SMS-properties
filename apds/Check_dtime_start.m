@@ -4,10 +4,9 @@ cd('E:\F8T2N2\apd full')
 allnames=struct2cell(dir('F8T2*'));
 [~,len]=size(allnames);
 
-days=['01212019';'01312019';'02012019';'02042019';'02052019';'02062019';'02082019';'02142019'...
-    ;'02182019';'02212019';'02222019'];
-
-days_leng=length(days);
+%days=['02142019';'02152019';'02172019';'02182019';'02212019';'02222019';'02262019'];
+days=['02042019'];
+days_leng=length(days(:,1));
 
 for days_i=1:days_leng
 eval(['total_SecDtime' num2str(days(days_i,:)) '=[]']);

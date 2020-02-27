@@ -1,13 +1,13 @@
 %Deal with apd files to use the shape only
 clearvars
 codefolder=pwd;
-solvent='F8T2N2';
-srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+%solvent='F8T2O2';
+%srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 srdir=['E:\F8T2N2'];
 cd (srdir)
 
 
-allnames=struct2cell(dir( '*.mat'));
+allnames=struct2cell(dir( '*02042019*4d1d1.mat'));
 [~,len]=size(allnames);
 for len_i=1:1:len
     clearvars -except srdir codefolder solvent len_i len allnames
@@ -19,7 +19,7 @@ for len_i=1:1:len
     date=regexp(datasetname,'\d*2019','match');
     file=regexp(datasetname,'\dd\dd\d*','match');
     
-    cd([srdir '\apd full\New folder'])
+    cd([srdir '\apd full'])
     apdfile=dir(['*' date{1} '*' file{1} '.mat']);
     if isempty(apdfile)
         disp(['Wrong apd related to' datasetfile])
@@ -54,7 +54,7 @@ for len_i=1:1:len
        end
     end
     
-cd([srdir '\apd full\New folder'])
+cd([srdir '\apd full'])
 save(['F8T2 Chloroform 2kDa N2 ' date{1} ' SecDtime ' file{1} '.mat'],'SecDtime');   
     
 end
