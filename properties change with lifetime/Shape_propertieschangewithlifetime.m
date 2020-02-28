@@ -85,6 +85,7 @@ SecDtimeintensityhis=zeros(SecDtimeEdge_leng,100);
 SecDtimeintensity_edge=min(SecDtimeintensity(:)):(max(SecDtimeintensity(:))-min(SecDtimeintensity(:)))/100:max(SecDtimeintensity(:));
 SecDtimelifetime_edge=min(SecDtimelifetime(:)):(max(SecDtimelifetime(:))-min(SecDtimelifetime(:)))/100:max(SecDtimelifetime(:));
 SecDtimelifetimehis=zeros(SecDtimeEdge_leng,length(SecDtimelifetime_edge)-1);
+SecDtime_sum=zeros(SecDtimeEdge_leng,6251);
 
 for SecDtime_leng_i=1:SecDtimeEdge_leng
     clearvars mol sec 
@@ -99,6 +100,7 @@ for SecDtime_leng_i=1:SecDtimeEdge_leng
         SecDtime_max_prepare(sec_i,1)=SecDtimemax(mol(sec_i,1),sec(sec_i,1));
         SecDtime_intensity_prepare(sec_i,1)=SecDtimeintensity(mol(sec_i,1),sec(sec_i,1));
         SecDtime_lifetime_prepare(sec_i,1)=SecDtimelifetime(sec(sec_i,1),mol(sec_i,1));
+        SecDtime_sum(SecDtime_leng_i,:)=SecDtime_sum(SecDtime_leng_i,:)+cell2mat(SecDtimeShape(sec(sec_i,1),mol(sec_i,1)));
     end
     SecDtimeavehis(SecDtime_leng_i,:)=histcounts(SecDtime_ave_prepare,edges);
     SecDtimemaxhis(SecDtime_leng_i,:)=histcounts(SecDtime_max_prepare,edges);
@@ -157,10 +159,22 @@ subplot(1,2,1)
   title(['lifetime number change with lifetime shape ' solvent])
 subplot(1,2,2)
   surf(SecDtimelifetime_edge(2:end),SecDtimeedge(1,1:end-1),normalize(SecDtimelifetimehis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
-  title(['Normalized intensity change with lifetime shape ' solvent])
-saveas(gcf,[solvent ' lifetime change with lifetime shape.jpg']);
-  saveas(gcf,[solvent ' lifetime change with lifetime shape.fig']);
+  title(['Normalized lifetime number change with lifetime shape ' solvent])
+saveas(gcf,[solvent ' lifetime number change with lifetime shape.jpg']);
+  saveas(gcf,[solvent ' lifetime number change with lifetime shape.fig']);
   disp('Save lifetime number change with lifetime shape successfully /n');
+  close all
+  
+figure
+subplot(1,2,1)
+  surf(8*(50:1000)/1000,SecDtimeedge(1,1:end),[SecDtime_sum(:,50:1000);zeros(1,951)],'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['lifetime number change with lifetime shape ' solvent])
+subplot(1,2,2)
+  surf(8*(50:1000)/1000,SecDtimeedge(1,1:end),normalize([SecDtime_sum(:,50:1000); zeros(1,951)],2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  title(['Normalized lifetime dtime shape change with lifetime shape' solvent])
+saveas(gcf,[solvent ' lifetime dtime shape change with lifetime shape.jpg']);
+  saveas(gcf,[solvent ' lifetime dtime shape change with lifetime shape.fig']);
+  disp('Save lifetime dtime shape change with lifetime shape successfully /n');
   close all
   
   
