@@ -148,8 +148,8 @@ subplot(1,2,1)
 subplot(1,2,2)
   surf(SecDtimeintensity_edge(2:end),SecDtimeedge(1,1:end-1),normalize(SecDtimeintensityhis,2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized intensity change with lifetime shape ' solvent])
-saveas(gcf,[solvent ' lifetime change with lifetime shape.jpg']);
-  saveas(gcf,[solvent ' lifetime change with lifetime shape.fig']);
+saveas(gcf,[solvent ' intensity change with lifetime shape.jpg']);
+  saveas(gcf,[solvent ' intenstity change with lifetime shape.fig']);
   disp('Save intensity change with lifetime shape successfully /n');
   close all
     
