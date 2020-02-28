@@ -2,7 +2,7 @@
 %lifetime. %E0001 is not settled
 
 clearvars
-solvent='F8T2O2';
+solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\F8T2O2'];
 cd (srdir)
@@ -35,7 +35,7 @@ for len_i=1:1:len
     
     date=regexp(name,['\d*' year],'match');
     file=regexp(name,'\dd\dd\d*','match');
-    cd([srdir '\apd full'])
+    cd([srdir '/apd full'])
     Secfile=dir(['*' date{1} '*SecDtime*' file{1} '.mat']);
     SecDtime=importdata(Secfile.name);
     
