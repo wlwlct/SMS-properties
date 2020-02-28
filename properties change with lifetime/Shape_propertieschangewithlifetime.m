@@ -75,7 +75,8 @@ for len_i=1:1:len
     end
 end
 
-SecDtimeedge=min(SecDtimeShape_bin(:)):(max(SecDtimeShape_bin(:))-min(SecDtimeShape_bin(:)))/100:max(SecDtimeShape_bin(:));
+%SecDtimeedge=min(SecDtimeShape_bin(:)):(max(SecDtimeShape_bin(:))-min(SecDtimeShape_bin(:)))/100:max(SecDtimeShape_bin(:));
+SecDtimeedge=min(SecDtimeShape_bin(:)):max(SecDtimeShape_bin(:));
 SecDtimeedge(1,end)=SecDtimeedge(1,end)+1;%include the last element
 SecDtimeEdge_leng=length(SecDtimeedge)-1;
 
@@ -166,12 +167,18 @@ saveas(gcf,[solvent ' lifetime number change with lifetime shape.jpg']);
   close all
   
 figure
-subplot(1,2,1)
+subplot(2,2,1)
+  histogram(SecDtimeShape_bin(:),min(SecDtimeShape_bin(:)):max(SecDtimeShape_bin(:)))
+  title(['Distribution of lifetime shape ' solvent])
+subplot(2,2,2)
   surf(8*(50:1000)/1000,SecDtimeedge(1,1:end),[SecDtime_sum(:,50:1000);zeros(1,951)],'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['lifetime number change with lifetime shape ' solvent])
-subplot(1,2,2)
+subplot(2,2,3)
   surf(8*(50:1000)/1000,SecDtimeedge(1,1:end),normalize([SecDtime_sum(:,50:1000); zeros(1,951)],2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized lifetime dtime shape change with lifetime shape' solvent])
+subplot(2,2,4)
+  contourf(8*(50:1000)/1000,SecDtimeedge(1,1:end),normalize([SecDtime_sum(:,50:1000); zeros(1,951)],2,'range'),1);colormap(jet);view([0 0 1]);
+  title(['Normalized lifetime dtime shape change with lifetime shape' solvent]) 
 saveas(gcf,[solvent ' lifetime dtime shape change with lifetime shape.jpg']);
   saveas(gcf,[solvent ' lifetime dtime shape change with lifetime shape.fig']);
   disp('Save lifetime dtime shape change with lifetime shape successfully /n');
@@ -214,6 +221,7 @@ saveas(gcf,[solvent ' Spectrum (normalize then add up) change with lifetime shap
  
   
   function bin=find50(rowshape)
+    rowshape=rowshape(50:2000);
     intensity=sum(rowshape,2);
     norm_rowshape=rowshape./intensity;
     rowshape_leng=length(rowshape);
