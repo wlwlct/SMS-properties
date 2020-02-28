@@ -8,5 +8,5 @@
 #SBATCH -e error.err
 #SBATCH -o Coutput.out
 module load matlab
-matlab -singleCompThread -nodisplay -nosplash -r  Shape_propertieschangewithlifetime.m
+matlab -singleCompThread -nodisplay -nosplash -r  Shape_propertieschangewithlifetime
 ##-nojvm
