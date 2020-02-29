@@ -116,6 +116,8 @@ catch
     cd([srdir '/lifetime change/']);
 end
 
+save([solvent 'SecDtimeShape.mat'],'SecDtimeShape')
+
 figure
 subplot(1,2,1)
   surf(edges(1,2:end),SecDtimeedge(1,1:end-1),SecDtimeavehis,'EdgeColor','none');colormap(jet);view([0 0 1]);
