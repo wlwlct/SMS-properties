@@ -1,3 +1,6 @@
+%designed to move dataset, need to put check point to check how good is the
+%matching.
+
 % cd('E:\F8T2N2\apd full')
 % clearvars
 % days=['02012019';'02042019';'02052019'];
