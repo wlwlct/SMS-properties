@@ -6,11 +6,11 @@
 clearvars
 solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8T2400nmCH'];
+%srdir=['E:\F8T2400nmCH'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
-[~,len]=size(allnames);len=5;
+[~,len]=size(allnames);
 
 apdintensitycombine=[];
 lifetimecombine=[];
@@ -28,7 +28,7 @@ timespectrum_normalized=zeros(100-place+1,99);
 
 SecDtimeintensity=cell(99,len);
 edges=450:1:670;
-year='2020';
+year='2019';
 
 for len_i=1:1:len
     clear name
