@@ -6,11 +6,11 @@
 clearvars
 solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2400nmCH'];
+srdir=['E:\F8T2400nmCH'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
-[~,len]=size(allnames);
+[~,len]=size(allnames);len=5;
 
 apdintensitycombine=[];
 lifetimecombine=[];
@@ -26,15 +26,24 @@ place=22;%start to calculate wavelength
 timespectrum=zeros(100-place+1,99);  
 timespectrum_normalized=zeros(100-place+1,99);   
 
+SecDtimeintensity=cell(99,len);
 edges=450:1:670;
+year='2020';
 
 for len_i=1:1:len
     clear name
     name=char(allnames(1,len_i));
     datasetfile=load([srdir '/' name]);
     disp('Finish load file /n')
-    try
-        
+    
+    date=regexp(name,['\d*' year],'match');
+    file=regexp(name,'\dd\dd\d*','match');
+    cd([srdir '/apd full'])
+    Secfile=dir(['*' date{1} '*SecDtime*' file{1} '.mat']);
+    SecDtime=importdata(Secfile.name);
+    
+    
+    try    
         [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
         wavelengthindex=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %average wavelength change with time%each second,each column
@@ -59,6 +68,9 @@ for len_i=1:1:len
         timelifetime(:,len_i)=Lifetime;
         %Intensity change with time
         timeintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
+        %dtime change with time
+        SecDtimeintensity(:,len_i)=SecDtime(1:99,2);
+        
 %         %E0001 Ratio change with time
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
@@ -71,6 +83,7 @@ end
 intensityedge=min(timeintensity(:)):(max(timeintensity(:))-min(timeintensity(:)))/100:max(timeintensity(:));
 int10000=1:100:10000;
 timeavehis=zeros(99,220);timemaxhis=zeros(99,220);timelifetimehis=zeros(99,(2500-50)/10);timeintensityhis=zeros(99,100);
+intSecDtime=zeros(99,6251);
 % timeE0001his=zeros(99,20);
 
 %histogramize
@@ -80,6 +93,7 @@ for i=1:1:99
     timelifetimehis(i,:)=histcounts(timelifetime(i,:),50:10:2500);
     timeintensityhis(i,:)=histcounts(timeintensity(:,i),intensityedge);
     timeint10000his(i,:)=histcounts(timeintensity(:,i),int10000);
+    intSecDtime(i,:)=sum(cell2mat(SecDtimeintensity(i,:)'),1);
 %     timeE0001his(i,:)=histcounts(timeE0001(:,i),0:0.05:1);
 end
 
@@ -153,10 +167,10 @@ saveas(gcf,[solvent ' Intensity change with time.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:100,datasetfile.dataset.ccdt(place:end,1),[timespectrum(:,:),zeros(100-place+1,1)],'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (add up) change with time ' solvent])
 subplot(1,2,2)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),normalize(timespectrum(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:100,datasetfile.dataset.ccdt(place:end,1),normalize([timespectrum(:,:),zeros(100-place+1,1)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (add up) change with time ' solvent])
 saveas(gcf,[solvent ' Spectrum (add up) change with time.jpg']);
   saveas(gcf,[solvent ' Spectrum (add up) change with time.fig']);
@@ -165,10 +179,10 @@ saveas(gcf,[solvent ' Spectrum (add up) change with time.jpg']);
   
 figure
 subplot(1,2,1)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),timespectrum_normalized(:,:),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:100,datasetfile.dataset.ccdt(place:end,1),[timespectrum_normalized(:,:),zeros(100-place+1,1)],'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Spectrum (normalize then add up) change with time ' solvent])
 subplot(1,2,2)
-  surf(1:1:99,datasetfile.dataset.ccdt(place:end,1),normalize(timespectrum_normalized(:,:),1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf(1:1:100,datasetfile.dataset.ccdt(place:end,1),normalize([timespectrum_normalized(:,:),zeros(100-place+1,1)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   title(['Normalized Spectrum (normalize then add up) change with time ' solvent])
 saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.jpg']);
   saveas(gcf,[solvent ' Spectrum (normalize then add up) change with time.fig']);
@@ -195,3 +209,17 @@ subplot(1,2,2)
   saveas(gcf,[solvent ' Intensity plot change with time.fig']);
   disp('Save Intensity plot change with time successfully /n');
   close all  
+  
+  figure
+subplot(1,2,1)
+  surf((1:6251)*8/1000,1:100,[intSecDtime;zeros(1,6251)],'EdgeColor','none');colormap(jet);view([0 0 1]);
+  xlim([0 8])
+  title(['Lifetime curve change with int ' solvent])
+subplot(1,2,2)
+  surf((1:6251)*8/1000,1:100,normalize([intSecDtime;zeros(1,6251)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  xlim([0 8])
+  title(['Normalized lifetime curve change with time ' solvent])
+saveas(gcf,[solvent ' Normalized lifetime curve change with time.jpg']);
+  saveas(gcf,[solvent ' Normalized lifetime curve change with time.fig']);
+  disp('Normalized lifetime curve change with time successfully /n');
+  close all   
