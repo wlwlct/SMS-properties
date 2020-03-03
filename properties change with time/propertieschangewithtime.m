@@ -216,7 +216,7 @@ subplot(1,2,1)
   xlim([0 8])
   title(['Lifetime curve change with int ' solvent])
 subplot(1,2,2)
-  surf((1:6251)*8/1000,1:100,normalize([intSecDtime;zeros(1,6251)],1,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
+  surf((1:6251)*8/1000,1:100,normalize([intSecDtime;zeros(1,6251)],2,'range'),'EdgeColor','none');colormap(jet);view([0 0 1]);
   xlim([0 8])
   title(['Normalized lifetime curve change with time ' solvent])
 saveas(gcf,[solvent ' Normalized lifetime curve change with time.jpg']);
