@@ -10,7 +10,12 @@ srdir=['E:\F8T2400nmCH\'];
 cd (srdir)
 
 allnames=struct2cell(dir( '*.mat'));
-[~,len]=size(allnames);
+[~,len]=size(allnames);len=10;
+
+%Find ordered by max; ordered by ratio in three different range.
+edges=450:1:670;
+year='2020';
+place=1;%start to calculate wavelength
 
 Lifindexremove=[];
 spectraave=zeros(99,len);
@@ -18,12 +23,14 @@ spectramax=zeros(len,99);
 spectralifetime=zeros(99,len);
 %intE0001=zeros(len,99);
 spectraintensity=zeros(len,99);
-place=22;%start to calculate wavelength
+
 spectraspectrum=zeros(100-place+1,99,len);
 spectraspectrum_normalized=zeros(100-place+1,99,len);
 SecDtimeintensity=cell(99,len);
-edges=450:1:670;
-year='2019';
+spectraspectrum_diff=zeros(100-place+1,98,len);
+spectraspectrum_std=zeros(len,98);
+        
+
 
 for len_i=1:1:len
     clear name
@@ -38,11 +45,11 @@ for len_i=1:1:len
     SecDtime=importdata(Secfile.name);
     
     try
-        [maxvalue,maxindex]=spectramax(datasetfile.dataset.ccdt(place:end,3:end),[],1);
+        [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
         %average wavelength change with int%each second,each column
-        spectraave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
+        %spectraave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
         %max wavelength change with int
-        intmax(len_i,:)=datasetfile.dataset.ccdt(maxindex+place-1,1);
+        spectramax(len_i,:)=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %spectrum change with int
         spectraspectrum(:,:,len_i)=datasetfile.dataset.ccdt(place:end,3:end);
         spectraspectrum_normalized(:,:,len_i)=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range');
@@ -62,6 +69,10 @@ for len_i=1:1:len
         spectraintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
         %dtime change with int
         SecDtimeintensity(:,len_i)=SecDtime(1:99,2);
+        %differentce in spectra;jitter
+        spectraspectrum_diff(:,:,len_i)=diff(datasetfile.dataset.ccdt(place:end,3:end),1,2);
+        spectraspectrum_std(len_i,:)=normalize(std(spectraspectrum_diff(:,:,len_i),0,1),2,'range');
+        
 %         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
@@ -72,10 +83,32 @@ for len_i=1:1:len
 end
 
 
+spectrum_edge_leng=length(edges)-1;
+spectra_max_prepare=cell(spectrum_edge_leng,1);
+for spectrum_edge_i=1:spectrum_edge_leng 
+    clearvars mol sec
+    [mol,sec]=find((spectramax>=edges(1,spectrum_edge_i)) & (spectramax<edges(1,spectrum_edge_i+1)));
+    sec_leng=length(sec); spectra_max_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+    for sec_i=1:sec_leng
+        spectra_max_prepare{spectrum_edge_i}(:,sec_i)=spectraspectrum_normalized(:,sec(sec_i,1),mol(sec_i,1));
+    end
+end
+
+spectra_max_prepare_test=spectra_max_prepare;
+for i=1:length(spectra_max_prepare)
+    if length(spectra_max_prepare{i,1}(1,:))>=3
+        [spectra_max_prepare_test{i,1},~]=sort_spectrum(spectra_max_prepare{i,1},place);
+    end
+end
+
+T=[];for i=1:220;if ~isempty(spectra_max_prepare{i,1});T=[T,spectra_max_prepare{i,1}];end;end
+T_test=[];for i=1:220;if ~isempty(spectra_max_prepare_test{i,1});T_test=[T_test,spectra_max_prepare_test{i,1}];end;end
+
+
 %edges=430:1:650;
 % intE0001his=zeros(99,20);
 
-intensityedge=min(spectraintensity(:)):(spectramax(spectraintensity(:))-min(spectraintensity(:)))/100:spectramax(spectraintensity(:));
+intensityedge=min(spectraintensity(:)):(max(spectraintensity(:))-min(spectraintensity(:)))/100:max(spectraintensity(:));
 intensityedge(1,end)=intensityedge(1,end)+1;%include the last element
 intensity_leng=length(intensityedge)-1;
 intsp=zeros(100-place+1,intensity_leng);intspn=zeros(100-place+1,intensity_leng);
@@ -91,7 +124,7 @@ for intensity_i=1:intensity_leng
         intsp(:,intensity_i)=intsp(:,intensity_i)+spectraspectrum(:,sec(sec_i,1),mol(sec_i,1));
         intspn(:,intensity_i)=intspn(:,intensity_i)+spectraspectrum_normalized(:,sec(sec_i,1),mol(sec_i,1));
         intave_prepare(sec_i,1)=spectraave(sec(sec_i,1),mol(sec_i,1));
-        intmax_prepare(sec_i,1)=intmax(mol(sec_i,1),sec(sec_i,1));
+        intmax_prepare(sec_i,1)=spectramax(mol(sec_i,1),sec(sec_i,1));
         intlifetime_prepare(sec_i,1)=spectralifetime(sec(sec_i,1),mol(sec_i,1));
         intSecDtime(:,intensity_i)=intSecDtime(:,intensity_i)+transpose(SecDtimeintensity{sec(sec_i,1),mol(sec_i,1)});
     end
@@ -101,10 +134,10 @@ for intensity_i=1:intensity_leng
 end
 
 try
-    cd([srdir '/intensity change/']);
+    cd([srdir '/spectra change/']);
 catch
-    mkdir([srdir '/intensity change/']);
-    cd([srdir '/intensity change/']);
+    mkdir([srdir '/spectra change/']);
+    cd([srdir '/spectra change/']);
 end
 
 figure
@@ -213,3 +246,35 @@ saveas(gcf,[solvent ' Normalized lifetime curve change with int.jpg']);
   saveas(gcf,[solvent ' Normalized lifetime curve change with int.fig']);
   disp('Normalized lifetime curve change with int successfully /n');
   close all   
+
+  function [Ordered_spectra,Spectra_order]=sort_spectrum(spectraspectrum_normalized,place)
+    %compare the distance from each spectrum
+    [w,s,m]=size(spectraspectrum_normalized);
+    total_spectra=s*m;
+    spectra_reshape=reshape(spectraspectrum_normalized,100-place+1,total_spectra);
+    spectra_reshape_s=normalize(smoothdata(spectra_reshape,1,'gaussian'),1);
+    Spectra_order=[[1;2];zeros(total_spectra-2,1)];
+%T=140;figure;plot(spectra_reshape(:,T));hold on;plot(spectra_reshape_test(:,T))
+for spectra_order_i=3:total_spectra
+    clearvars Point_diff Spectra_order_nonzero Spectra_order_nonzero_leng Point_diff_minloc
+    Spectra_order_nonzero=Spectra_order(Spectra_order~=0);
+    Spectra_order_nonzero_leng=length(Spectra_order_nonzero);
+    Point_diff=sum((spectra_reshape_s(:,spectra_order_i)-spectra_reshape_s(:,Spectra_order_nonzero)).^2,1);
+    [~,Point_diff_minloc]=min(Point_diff);
+    if Point_diff_minloc==1
+        Spectra_order(1:Spectra_order_nonzero_leng+1,1)=[spectra_order_i;Spectra_order_nonzero];
+    elseif Point_diff_minloc==Spectra_order_nonzero_leng
+        Spectra_order(Spectra_order_nonzero_leng+1,1)=spectra_order_i;
+    else
+        [~,LorR]=min([Point_diff(1,Point_diff_minloc-1),Point_diff(1,Point_diff_minloc+1)]);
+        if LorR==1
+            Spectra_order(1:Spectra_order_nonzero_leng+1,1)=[Spectra_order_nonzero(1:Point_diff_minloc-1,1);spectra_order_i;Spectra_order_nonzero(Point_diff_minloc:end,1)];
+        elseif LorR==2
+            Spectra_order(1:Spectra_order_nonzero_leng+1,1)=[Spectra_order_nonzero(1:Point_diff_minloc,1);spectra_order_i;Spectra_order_nonzero(Point_diff_minloc+1:end,1)];
+        else
+            disp('Not left or right, something is wrong')
+        end
+    end     
+end
+Ordered_spectra=spectra_reshape(:,Spectra_order);
+  end
