@@ -159,11 +159,11 @@ subplot(2,2,2);mesh(edges,datasetfile.dataset.ccdt(place:end,1),normalize([spect
     view([0 0 1]); colormap(jet);title('next');ylabel('Wavelength (nm)');xlabel('Max Wavelength (nm)');
 subplot(2,2,3);yyaxis left;plot(edges(1:220),spectra_intensity_average(1,:));ylabel('Mean Intensity')
     yyaxis right;plot(edges(1:220),spectra_intensity_average(2,:));ylabel('Std Intensity');xlabel('Max Wavelength (nm)')
-subplot(2,2,4);mesh(edges,(1:6251)*8/1000,[spectra_Dtime_average zeros(6251,1)]);
+subplot(2,2,4);mesh(edges,(1:6251)*8/1000,[normalize(spectra_Dtime_average,1,'range') zeros(6251,1)]);
     view([0 0 1]); colormap(jet);title('Dtime');ylim([1 5]);xlabel('Max Wavelength (nm)');ylabel('Dtime (ns)');
 
-saveas(gcf,[solvent 'Dtime int with spectra with blank.fig']);
-saveas(gcf,[solvent 'Dtime int with spectra with blank.jpg']);
+saveas(gcf,[solvent ' Dtime int with spectra with blank.fig']);
+saveas(gcf,[solvent ' Dtime int with spectra with blank.jpg']);
 close all
 
 loc=find(any(spectra_max_average));loc_leng=length(loc(1,:));loc_name=cellfun(@num2str,num2cell(edges(1,loc)),'UniformOutput',false);
@@ -177,10 +177,10 @@ subplot(2,2,2);mesh(1:loc_leng+1,datasetfile.dataset.ccdt(place:end,1),normalize
 subplot(2,2,3);yyaxis left;plot(1:loc_leng,spectra_intensity_average(1,loc));ylabel('Mean Intensity')
     yyaxis right;plot(1:loc_leng,spectra_intensity_average(2,loc));ylabel('Std Intensity');xlabel('Max Wavelength (nm)')
     xticks(1:loc_leng);xticklabels(loc_name);
-subplot(2,2,4);mesh(1:loc_leng+1,(1:6251)*8/1000,[spectra_Dtime_average(:,loc) zeros(6251,1)]);
+subplot(2,2,4);mesh(1:loc_leng+1,(1:6251)*8/1000,[normalize(spectra_Dtime_average(:,loc),1,'range') zeros(6251,1)]);
     view([0 0 1]); colormap(jet);title('Dtime');ylim([1 5]);xlabel('Max Wavelength (nm)');ylabel('Dtime (ns)');
     xticks(1:loc_leng+1);xticklabels([loc_name '0']);
 
-saveas(gcf,[solvent 'Dtime int with spectra.fig']);
-saveas(gcf,[solvent 'Dtime int with spectra.jpg']);
+saveas(gcf,[solvent ' Dtime int with spectra.fig']);
+saveas(gcf,[solvent ' Dtime int with spectra.jpg']);
 close all
