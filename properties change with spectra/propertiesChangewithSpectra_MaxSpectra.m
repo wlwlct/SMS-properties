@@ -2,15 +2,15 @@
 clearvars;solvent='F8T2N2';
 codefolder=pwd;
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2400nmCH\'];
+% srdir=['E:\F8T2O2\'];
 cd (srdir)
 allnames=struct2cell(dir( '*.mat'));
 [~,len]=size(allnames);
 
 %Find ordered by max; ordered by ratio in three different range.
 edges=450:1:670;
-year='2020';
-place=1;%start to calculate wavelength
+year='2019';
+place=22;%start to calculate wavelength
 
 Lifindexremove=[];
 spectralifetime=zeros(99,len);
@@ -90,7 +90,7 @@ spectramax_smooth=zeros(len,99);
 for len_i=1:len
     clearvars spectramax_smooth_loc
     [~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',8),[],1);
-    spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc,1));
+    spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc+21,1));
 end
 
 %cut anything related to the last second, it would not related to spectrum
