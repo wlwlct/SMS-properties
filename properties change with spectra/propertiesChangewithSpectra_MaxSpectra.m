@@ -90,7 +90,7 @@ spectramax_smooth=zeros(len,99);
 for len_i=1:len
     clearvars spectramax_smooth_loc
     [~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',8),[],1);
-    spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc+21,1));
+    spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc+place-1,1));
 end
 
 %cut anything related to the last second, it would not related to spectrum

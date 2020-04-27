@@ -2,10 +2,10 @@
 clearvars;solvent='F8T2N2';
 codefolder=pwd;
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8T2400nmCH\'];
+%srdir=['E:\F8T2400nmCH\'];
 cd (srdir)
 allnames=struct2cell(dir( '*.mat'));
-[~,len]=size(allnames);len=10;
+[~,len]=size(allnames);
 
 %Find ordered by max; ordered by ratio in three different range.
 edges=450:1:670;
@@ -16,14 +16,13 @@ place=1;%start to calculate wavelength
 Lifindexremove=[];
 spectramax=zeros(len,99);
 spectralifetime=zeros(99,len);
-%intE0001=zeros(len,99);
 spectraintensity=zeros(len,99);
 
 spectraspectrum=zeros(100-place+1,99,len);
 spectraspectrum_normalized=zeros(100-place+1,99,len);
 SecDtimeintensity=cell(99,len);
 spectraspectrum_diff=zeros(100-place+1,98,len);
-spectraspectrum_std=zeros(len,98);
+spectraspectrum_diff_std=zeros(len,98);
 spectra_stage=zeros(100-place+1,99,len);
 spectra_stage_ratio=zeros(99,len);
 
@@ -75,7 +74,7 @@ for len_i=1:1:len
         %SecDtimeintensity(:,len_i)=SecDtime(1:99,2);
         %differentce in spectra;jitter
         spectraspectrum_diff(:,:,len_i)=diff(datasetfile.dataset.ccdt(place:end,3:end),1,2);
-        spectraspectrum_std(len_i,:)=std(spectraspectrum_diff(:,:,len_i),0,1);
+        spectraspectrum_diff_std(len_i,:)=std(spectraspectrum_diff(:,:,len_i),0,1);
 %         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
@@ -87,31 +86,32 @@ end
 
 %Remove some of the spectrum that has no shape
 % spectraspectrum% spectra_stage
-% spectraspectrum_diff% spectraspectrum_std
+% spectraspectrum_diff% spectraspectrum_diff_std
 % spectra_stage_ratio% spectraspectrum_normalized% spectramax
 % spectralifetime% spectraintensity% SecDtimeintensity
 
-max_int=max(spectraspectrum(:));
 [Bad_sec,Bad_mol]=find(spectra_stage_ratio<2.3);
-Bad_leng=length(Bad_sec);
+Bad_leng=length(Bad_sec);max_int=max(spectraspectrum(:));
 for i=1:Bad_leng
-    spectraspectrum(end-10:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
-    spectraspectrum(end-10:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
-    spectraspectrum_normalized(90:100,Bad_sec(i,1),Bad_mol(i,1))=1.1;
+    spectraspectrum(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
+    spectraspectrum_normalized(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=1.1;
 end
-
+spectramax_smooth=zeros(len,99);
+for len_i=1:len
+    clearvars spectramax_smooth_loc
+[~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',8),[],1);
+spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc,1));
+end
 
 %cut anything related to the last second, it would not related to spectrum
 %change or jitter.
 spectramax=spectramax(:,1:98);
 spectramax_smooth=spectramax_smooth(:,1:98);
 spectraspectrum_normalized_smooth=smoothdata(spectraspectrum_normalized,1,'gaussian',8);
-%spectraspectrum=spectraspectrum(:,1:98,:);
-%spectraspectrum_normalized=spectraspectrum_normalized(:,1:98,:);
 spectralifetime=spectralifetime(1:98,:);
 %spectraintensity=spectraintensity(:,1:98);
 %SecDtimeintensity=SecDtimeintensity(1:98,:);
-spectraspectrum_std_normalize=normalize(spectraspectrum_std,2,'range');
+%spectraspectrum_std_normalize=normalize(spectraspectrum_diff_std,2,'range');
 
 %Sort spectra based on maxwavelength. Inside each max wavelength, the
 %spectra is sorted or not based on the similarity.
@@ -128,17 +128,17 @@ for spectrum_edge_i=1:spectrum_edge_leng
     clearvars mol sec
     [mol,sec]=find((spectramax_smooth>=edges(1,spectrum_edge_i)) & (spectramax_smooth<edges(1,spectrum_edge_i+1)));
     sec_leng=length(sec); 
-    spectra_max_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
-    spectra_max_prepare_smooth{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
-    spectra_next_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
-    spectra_next_prepare_smooth{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
-    spectra_difference_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+        spectra_max_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+        spectra_max_prepare_smooth{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+        spectra_next_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+        spectra_next_prepare_smooth{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
+        spectra_difference_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
     for sec_i=1:sec_leng
         spectra_max_prepare{spectrum_edge_i}(:,sec_i)=spectraspectrum_normalized(:,sec(sec_i,1),mol(sec_i,1));
         spectra_max_prepare_smooth{spectrum_edge_i}(:,sec_i)=spectraspectrum_normalized_smooth(:,sec(sec_i,1),mol(sec_i,1));
-        spectra_next_intensity_prepare{spectrum_edge_i}(1,sec_i)=spectraintensity(mol(sec_i,1),sec(sec_i,1)+1);
-        spectra_jitter_prepare{spectrum_edge_i}(1,sec_i)=spectraspectrum_std(mol(sec_i,1),sec(sec_i,1));
-        spectra_jitter_prepare_normalize{spectrum_edge_i}(1,sec_i)=spectraspectrum_std_normalize(mol(sec_i,1),sec(sec_i,1));
+%         spectra_next_intensity_prepare{spectrum_edge_i}(1,sec_i)=spectraintensity(mol(sec_i,1),sec(sec_i,1)+1);
+        spectra_jitter_prepare{spectrum_edge_i}(1,sec_i)=spectraspectrum_diff_std(mol(sec_i,1),sec(sec_i,1));
+%        spectra_jitter_prepare_normalize{spectrum_edge_i}(1,sec_i)=spectraspectrum_std_normalize(mol(sec_i,1),sec(sec_i,1));
         spectra_next_prepare{spectrum_edge_i}(:,sec_i)=spectraspectrum_normalized(:,sec(sec_i,1)+1,mol(sec_i,1));
         spectra_next_prepare_smooth{spectrum_edge_i}(:,sec_i)=spectraspectrum_normalized_smooth(:,sec(sec_i,1)+1,mol(sec_i,1));
         spectra_difference_prepare{spectrum_edge_i}(:,sec_i)=spectraspectrum_diff(:,sec(sec_i,1),mol(sec_i,1));
@@ -186,8 +186,8 @@ for i=1:220
     if ~isempty(spectra_max_prepare{i,1})
         spectra_D_pos{i,1}(spectra_D_pos{i,1}<0)=0;
         spectra_D_neg{i,1}(spectra_D_neg{i,1}>0)=0;
-        spectra_D_pos_sum(:,i)=sum(spectra_D_pos{i,1},2);
-        spectra_D_neg_sum(:,i)=sum(spectra_D_neg{i,1},2);
+        spectra_D_pos_sum(:,i)=sum(normalize(spectra_D_pos{i,1},1,'range'),2);
+        spectra_D_neg_sum(:,i)=sum(normalize(spectra_D_neg{i,1},1,'range'),2);
         spectra_max_sum(:,i)=sum(spectra_max_prepare{i,1},2);
         spectra_next_sum(:,i)=sum(spectra_next_prepare{i,1},2);
     end
