@@ -1,8 +1,8 @@
 %Parameter setting
-clearvars;solvent='F8T2N2';
+clearvars;solvent='F8Se2N2';
 codefolder=pwd;
-srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-%srdir=['E:\F8T2400nmCH\'];
+%srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+srdir=['E:\F8Se2 July\' 'F8Se2O2'];
 cd (srdir)
 allnames=struct2cell(dir( '*.mat'));
 [~,len]=size(allnames);
@@ -11,20 +11,21 @@ allnames=struct2cell(dir( '*.mat'));
 edges=450:1:670;
 year='2020';
 place=1;%start to calculate wavelength
+max_secs=200;%choose according to the max number of seconds in each files.
 
 
 Lifindexremove=[];
-spectramax=zeros(len,99);
-spectralifetime=zeros(99,len);
-spectraintensity=zeros(len,99);
+spectramax=zeros(len,max_secs);
+spectralifetime=zeros(max_secs,len);
+spectraintensity=zeros(len,max_secs);
 
-spectraspectrum=zeros(100-place+1,99,len);
-spectraspectrum_normalized=zeros(100-place+1,99,len);
-SecDtimeintensity=cell(99,len);
-spectraspectrum_diff=zeros(100-place+1,98,len);
-spectraspectrum_diff_std=zeros(len,98);
-spectra_stage=zeros(100-place+1,99,len);
-spectra_stage_ratio=zeros(99,len);
+spectraspectrum=zeros(100-place+1,max_secs,len);
+spectraspectrum_normalized=zeros(100-place+1,max_secs,len);
+SecDtimeintensity=cell(max_secs,len);
+spectraspectrum_diff=zeros(100-place+1,max_secs,len);
+spectraspectrum_diff_std=zeros(len,max_secs);
+spectra_stage=zeros(100-place+1,max_secs,len);
+spectra_stage_ratio=zeros(max_secs,len);
 
 %import data; only contain raw data;
 for len_i=1:1:len
@@ -42,10 +43,13 @@ for len_i=1:1:len
     try
         [~,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
         %max wavelength change with spectra
-        spectramax(len_i,:)=datasetfile.dataset.ccdt(maxindex+place-1,1);
+        spectramax_leng=length(datasetfile.dataset.ccdt(maxindex+place-1,1));
+        spectramax(len_i,1:spectramax_leng)=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %spectrum change with spectra
-        spectraspectrum(:,:,len_i)=datasetfile.dataset.ccdt(place:end,3:end);
-        for ii=1:99
+        spectraspectrum_leng=length(datasetfile.dataset.ccdt(1,3:end));
+        spectraspectrum(:,1:spectraspectrum_leng,len_i)=datasetfile.dataset.ccdt(place:end,3:end);
+        for ii=1:max_secs
+            try
             clearvars A
             cd(codefolder)
             [~,A.eff_fit,~,A.numst,~]=Traceson(spectraspectrum(:,ii,len_i),codefolder);
@@ -54,8 +58,10 @@ for len_i=1:1:len
                 spectra_stage(:,ii,len_i)=transpose(efffit);
                 spectra_stage_ratio(ii,len_i)=max(spectra_stage(:,ii,len_i))/min(spectra_stage(:,ii,len_i));
             end
+            catch
+            end
         end
-        spectraspectrum_normalized(:,:,len_i)=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range');
+        spectraspectrum_normalized(:,1:spectraspectrum_leng,len_i)=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range');
         %lifetime change with spectra
         [newconti_leng,~]=size(datasetfile.dataset.newconti);
         for newconti_i=1:1:newconti_leng
@@ -67,20 +73,24 @@ for len_i=1:1:len
         end
         lifetime=datasetfile.dataset.scatterplot.lifetime(:,2);
         lifetime(Lifindexremove,:)=-1;
-        spectralifetime(:,len_i)=lifetime;
+        spectralifetime_leng=length(lifetime);
+        spectralifetime(1:spectralifetime_leng,len_i)=lifetime;
         %Intensity change with spectra
-        spectraintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
+        spectraintensity_leng=length(datasetfile.dataset.scatterplot.intensity(1,:));
+        spectraintensity(len_i,1:spectraintensity_leng)=datasetfile.dataset.scatterplot.intensity(1,:);
         %dtime change with spectra
-        %SecDtimeintensity(:,len_i)=SecDtime(1:99,2);
+        %SecDtimeintensity(:,len_i)=SecDtime(1:max_secs,2);
         %differentce in spectra;jitter
-        spectraspectrum_diff(:,:,len_i)=diff(datasetfile.dataset.ccdt(place:end,3:end),1,2);
+        spectraspectrum_diff_leng=length(datasetfile.dataset.ccdt(1,3:end))-1;
+        spectraspectrum_diff(:,1:spectraspectrum_diff_leng,len_i)=diff(datasetfile.dataset.ccdt(place:end,3:end),1,2);
         spectraspectrum_diff_std(len_i,:)=std(spectraspectrum_diff(:,:,len_i),0,1);
 %         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
 %         intE0001(len_i,:)=E00sum./E01sum;
-    catch
-        disp([name 'may not have length 99'])
+    catch ME
+        rethrow(ME)
+        disp([name 'may not have length max_secs'])
     end
 end
 
@@ -96,7 +106,7 @@ for i=1:Bad_leng
     spectraspectrum(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
     spectraspectrum_normalized(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=1.1;
 end
-spectramax_smooth=zeros(len,99);
+spectramax_smooth=zeros(len,max_secs);
 for len_i=1:len
     clearvars spectramax_smooth_loc
 [~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',8),[],1);
@@ -105,12 +115,12 @@ end
 
 %cut anything related to the last second, it would not related to spectrum
 %change or jitter.
-spectramax=spectramax(:,1:98);
-spectramax_smooth=spectramax_smooth(:,1:98);
+spectramax=spectramax(:,1:max_secs);
+spectramax_smooth=spectramax_smooth(:,1:max_secs);
 spectraspectrum_normalized_smooth=smoothdata(spectraspectrum_normalized,1,'gaussian',8);
-spectralifetime=spectralifetime(1:98,:);
-%spectraintensity=spectraintensity(:,1:98);
-%SecDtimeintensity=SecDtimeintensity(1:98,:);
+spectralifetime=spectralifetime(1:max_secs,:);
+%spectraintensity=spectraintensity(:,1:max_secs);
+%SecDtimeintensity=SecDtimeintensity(1:max_secs,:);
 %spectraspectrum_std_normalize=normalize(spectraspectrum_diff_std,2,'range');
 
 %Sort spectra based on maxwavelength. Inside each max wavelength, the
@@ -284,7 +294,7 @@ Ordered_spectra=spectra_reshape(:,Spectra_order);
 % [~,loc590]=min(abs(datasetfile.dataset.ccdt(:,1)-590));
 % w=ones(length(datasetfile.dataset.ccdt(:,1)),1);
 % w(loc480:loc590)=2;
-% spectra_std_w=zeros(94,99);
+% spectra_std_w=zeros(94,max_secs);
 % for i=1:94
 %    spectra_std_w(i,:)=std(spectraspectrum(:,:,i),w,1);
 % end
