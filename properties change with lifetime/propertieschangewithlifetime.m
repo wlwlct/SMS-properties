@@ -4,6 +4,9 @@
 clearvars
 solvent='F8T2O2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+srdir=['E:\F8Se2 July\' 'F8Se2O2'];
+max_secs=200;%choose according to the max number of seconds in each files.
+
 %srdir=['E:\F8T2O2'];
 cd (srdir)
 
@@ -12,14 +15,14 @@ allnames=struct2cell(dir( '*.mat'));
 
 Lifindexremove=[];
    
-lifeave=zeros(99,len);
-lifemax=zeros(len,99);
-lifelifetime=zeros(99,len);
-%intE0001=zeros(len,99);
-lifeintensity=zeros(len,99);
+lifeave=zeros(max_secs,len);
+lifemax=zeros(len,max_secs);
+lifelifetime=zeros(max_secs,len);
+%intE0001=zeros(len,max_secs);
+lifeintensity=zeros(len,max_secs);
 place=22;%start to calculate wavelength
-lifespectrum=zeros(100-place+1,99,len);
-lifespectrum_normalized=zeros(100-place+1,99,len);
+lifespectrum=zeros(100-place+1,max_secs,len);
+lifespectrum_normalized=zeros(100-place+1,max_secs,len);
 edges=450:1:670;
 
 for len_i=1:1:len
@@ -39,23 +42,29 @@ for len_i=1:1:len
         end
         lifetime=datasetfile.dataset.scatterplot.lifetime(:,2);
         lifetime(Lifindexremove,:)=-1;
-        lifelifetime(:,len_i)=lifetime;
+        lifelifetime_leng=length(lifetime);
+        lifelifetime(1:lifelifetime_leng,len_i)=lifetime;
         [maxvalue,maxindex]=max(datasetfile.dataset.ccdt(place:end,3:end),[],1);
         %average wavelength change with int%each second,each column
-        lifeave(:,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
+        lifeave_leng=length(datasetfile.dataset.scatterplot.spectrum(:,1));
+        lifeave(1:lifeave_leng,len_i)=datasetfile.dataset.scatterplot.spectrum(:,1);
         %max wavelength change with int
-        lifemax(len_i,:)=datasetfile.dataset.ccdt(maxindex+place-1,1);
+        lifemax_leng=length(datasetfile.dataset.ccdt(maxindex+place-1,1));
+        lifemax(len_i,1:lifemax_leng)=datasetfile.dataset.ccdt(maxindex+place-1,1);
         %spectrum change with int
-        lifespectrum(:,:,len_i)=datasetfile.dataset.ccdt(place:end,3:end);
-        lifespectrum_normalized(:,:,len_i)=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range');
+        lifespectrum_leng=length(datasetfile.dataset.ccdt(1,3:end));
+        lifespectrum(:,1:lifespectrum_leng,len_i)=datasetfile.dataset.ccdt(place:end,3:end);
+        lifespectrum_normalized(:,1:lifespectrum_leng,len_i)=normalize(datasetfile.dataset.ccdt(place:end,3:end),1,'range');
         %Intensity change with int
-        lifeintensity(len_i,:)=datasetfile.dataset.scatterplot.intensity(1,:);
+        lifeintensity_leng=length(datasetfile.dataset.scatterplot.intensity(1,:));
+        lifeintensity(len_i,1:lifeintensity_leng)=datasetfile.dataset.scatterplot.intensity(1,:);
 %         %E0001 Ratio change with int
 %         E00sum=sum(datasetfile.dataset.ccdt(27:31,3:end),1);
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
 %         intE0001(len_i,:)=E00sum./E01sum;
-    catch
-        disp([name 'may not have length 99'])
+    catch ME
+        rethrow(ME)
+        disp([name 'may not have length max_secs'])
     end
 end
 
@@ -129,7 +138,7 @@ saveas(gcf,[solvent ' lifetime change with lifetime.jpg']);
   close all
     
 % figure
-% surf(0.05:0.05:1,1:1:99,intE0001his,'EdgeColor','none');
+% surf(0.05:0.05:1,1:1:max_secs,intE0001his,'EdgeColor','none');
 % colormap(jet)
 % view([0 0 1])
 %   title(['E0001R change with int ' solvent])
