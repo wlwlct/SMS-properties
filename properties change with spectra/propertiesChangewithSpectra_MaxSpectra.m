@@ -1,10 +1,11 @@
 %Parameter setting
 clearvars;solvent='F8T2N2';
 codefolder=pwd;
-srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8Se2 July\' 'F8Se2O2'];
+%srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+%srdir=['E:\F8Se2 July\' 'F8Se2O2'];
+srdir=['E:\F8T2400nmCH'];
 cd (srdir)
-allnames=struct2cell(dir( '*.mat'));
+allnames=struct2cell(dir( '*dataset*.mat'));
 [~,len]=size(allnames);
 
 %Find ordered by max; ordered by ratio in three different range.
@@ -90,12 +91,24 @@ end
 % spectra_stage_ratio% spectraspectrum_normalized
 % spectralifetime% spectraintensity% SecDtimeintensity
 
-[Bad_sec,Bad_mol]=find(spectra_stage_ratio<2.3);
+%spectramax before sign big value to bad spectra
+spectramax=zeros(len,max_secs);
+for len_i=1:len
+    [~,spectramax_loc]=max(spectraspectrum(:,:,len_i),[],1);
+    spectramax(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_loc+place-1,1));
+end
+
+for ra=[-1 1.5 2 2.3]
+[Bad_sec,Bad_mol]=find(spectra_stage_ratio<ra);
 Bad_leng=length(Bad_sec);max_int=max(spectraspectrum(:));
+
+
 for i=1:Bad_leng
     spectraspectrum(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
     spectraspectrum_normalized(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=1.1;
 end
+
+%spectramax before sign big value to bad spectra
 spectramax_smooth=zeros(len,max_secs);
 for len_i=1:len
     clearvars spectramax_smooth_loc
@@ -162,6 +175,20 @@ for i=1:220
     end
 end
 
+if ra<0
+    ra=complex(0,ra);
+end
+
+%spectrum distribution stuff
+figure
+hold on; histogram(spectramax(:),400:900)
+hold on; histogram(spectramax_smooth(:),400:900)
+legend('spectra_m_a_x','spectra_m_a_x_s_o_o_t_h')
+title(ra)
+saveas(gcf,[num2str(ra) ' dis of max and smooth max.jpg']);
+saveas(gcf,[num2str(ra) ' dis of max and smooth max.fig']);
+close all
+
 %plot average max spectrum; next spectrum; intensity; Dtime;
 figure('Position',[0,0,729,554]);
 subplot(2,2,1);mesh(edges,datasetfile.dataset.ccdt(place:end,1),normalize([spectra_max_average zeros(100-place+1,1)],1,'range'));
@@ -173,8 +200,8 @@ subplot(2,2,3);yyaxis left;plot(edges(1:220),spectra_intensity_average(1,:));yla
 subplot(2,2,4);mesh(edges,(1:6251)*8/1000,[normalize(spectra_Dtime_average,1,'range') zeros(6251,1)]);
     view([0 0 1]); colormap(jet);title('Dtime');ylim([1 5]);xlabel('Max Wavelength (nm)');ylabel('Dtime (ns)');
 
-saveas(gcf,[solvent ' Dtime int with spectra with blank.fig']);
-saveas(gcf,[solvent ' Dtime int with spectra with blank.jpg']);
+saveas(gcf,[num2str(ra) solvent ' Dtime int with spectra with blank.fig']);
+saveas(gcf,[num2str(ra) ' Dtime int with spectra with blank.jpg']);
 close all
 
 loc=find(any(spectra_max_average));loc_leng=length(loc(1,:));loc_name=cellfun(@num2str,num2cell(edges(1,loc)),'UniformOutput',false);
@@ -192,6 +219,7 @@ subplot(2,2,4);mesh(1:loc_leng+1,(1:6251)*8/1000,[normalize(spectra_Dtime_averag
     view([0 0 1]); colormap(jet);title('Dtime');ylim([1 5]);xlabel('Max Wavelength (nm)');ylabel('Dtime (ns)');
     xticks(1:loc_leng+1);xticklabels([loc_name '0']);
 
-saveas(gcf,[solvent ' Dtime int with spectra.fig']);
-saveas(gcf,[solvent ' Dtime int with spectra.jpg']);
+saveas(gcf,[num2str(ra) solvent ' Dtime int with spectra.fig']);
+saveas(gcf,[num2str(ra) solvent ' Dtime int with spectra.jpg']);
 close all
+end
