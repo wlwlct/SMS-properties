@@ -98,7 +98,7 @@ for len_i=1:len
     spectramax(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_loc+place-1,1));
 end
 
-for ra=[-1 1.5 2 2.3]
+for ra=[1.6 1.7 1.75]
 [Bad_sec,Bad_mol]=find(spectra_stage_ratio<ra);
 Bad_leng=length(Bad_sec);max_int=max(spectraspectrum(:));
 

@@ -2,9 +2,11 @@
 %wavelength of each moleucle (sum of molecule spectrum without normalization)
 %must not include data that not with same x value.
 clearvars
-solvent='F8T2400nmCH';
+solvent='F8Se2488nmCH';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
 %srdir=['E:\02252019\dataset intermediates\0'];
+srdir=['E:\F8Se2 July\' 'F8Se2N2'];
+
 cd (srdir)
 wavelengthstart=1;
 edges=430:2:650;
@@ -63,3 +65,4 @@ title(['Molecule Intensity Distribution in ' solvent])
 saveas(gcf,[solvent ' Molecule Intensity Distribution.jpg']);
 saveas(gcf,[solvent ' Molecule Intesity Distribution.fig']);
 disp('Save Molecule Intensity successfully /n')
+close all

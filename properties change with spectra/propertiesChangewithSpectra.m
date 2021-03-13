@@ -2,9 +2,9 @@
 clearvars;solvent='F8Se2N2';
 codefolder=pwd;
 %srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8Se2 July\' 'F8Se2O2'];
+srdir=['E:\F8T2400nmCH'];
 cd (srdir)
-allnames=struct2cell(dir( '*.mat'));
+allnames=struct2cell(dir( '*dataset*.mat'));
 [~,len]=size(allnames);
 
 %Find ordered by max; ordered by ratio in three different range.
@@ -99,9 +99,11 @@ end
 % spectraspectrum_diff% spectraspectrum_diff_std
 % spectra_stage_ratio% spectraspectrum_normalized% spectramax
 % spectralifetime% spectraintensity% SecDtimeintensity
+%%
 
-[Bad_sec,Bad_mol]=find(spectra_stage_ratio<2.3);
-Bad_leng=length(Bad_sec);max_int=max(spectraspectrum(:));
+for ra=[-1,1.1,1.5,2.3]
+[Bad_sec,Bad_mol]=find(spectra_stage_ratio<ra);
+ Bad_leng=length(Bad_sec);max_int=max(spectraspectrum(:));
 for i=1:Bad_leng
     spectraspectrum(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=100+max_int;
     spectraspectrum_normalized(end-5:end,Bad_sec(i,1),Bad_mol(i,1))=1.1;
@@ -109,7 +111,7 @@ end
 spectramax_smooth=zeros(len,max_secs);
 for len_i=1:len
     clearvars spectramax_smooth_loc
-[~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',8),[],1);
+[~,spectramax_smooth_loc]=max(smoothdata(spectraspectrum(:,:,len_i),1,'gaussian',4),[],1);
 spectramax_smooth(len_i,:)=transpose(datasetfile.dataset.ccdt(spectramax_smooth_loc,1));
 end
 
@@ -137,7 +139,11 @@ spectra_difference_prepare=cell(spectrum_edge_leng,1);
 for spectrum_edge_i=1:spectrum_edge_leng 
     clearvars mol sec
     [mol,sec]=find((spectramax_smooth>=edges(1,spectrum_edge_i)) & (spectramax_smooth<edges(1,spectrum_edge_i+1)));
+    %disp(['edge range:',num2str(edges(1,spectrum_edge_i)),' ',num2str(edges(1,spectrum_edge_i+1))])
     sec_leng=length(sec); 
+    
+    %hold on;scatter(spectrum_edge_i,sec_leng)
+
         spectra_max_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
         spectra_max_prepare_smooth{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
         spectra_next_prepare{spectrum_edge_i,1}=zeros(100-place+1,sec_leng);
@@ -155,13 +161,36 @@ for spectrum_edge_i=1:spectrum_edge_leng
     end
 end
 
+ %A=cellfun(@numel,spectra_max_prepare,'UniformOutput',false);%
+ %A=cell2mat(A)/100;%
+ %hold on;scatter(1:length(A),A)%
+ %title(ra)
+
+
+%%
 try
     cd([srdir '/spectra change/']);
 catch
     mkdir([srdir '/spectra change/']);
     cd([srdir '/spectra change/']);
 end
+%%
+%Check how the n number actually change the imeage, especially select red
+%ones
+if ra==-1
+    ra=complex(0,ra);
+end
 
+figure
+hold on; histogram(spectramax(:),400:900)
+hold on; histogram(spectramax_smooth(:),400:900)
+legend('spectra_m_a_x','spectra_m_a_x_s_o_o_t_h')
+title(ra)
+saveas(gcf,[num2str(ra) ' dis of max and smooth max.jpg']);
+saveas(gcf,[num2str(ra) ' dis of max and smooth max.fig']);
+close all
+
+%%
 %average spectra shape in each range,mesh current next and difference...
 spectra_max_average=zeros(100-place+1,220);
 spectra_next_average=zeros(100-place+1,220);
@@ -180,10 +209,10 @@ subplot(1,3,2);mesh(1:220,datasetfile.dataset.ccdt(place:end,1),spectra_next_ave
     view([0 0 1]); colormap(jet);title('next')
 subplot(1,3,3);mesh(1:220,datasetfile.dataset.ccdt(place:end,1),spectra_difference_average);
     view([0 0 1]); colormap(jet);title('difference')
-saveas(gcf,['current next and difference spectra.fig']);
-saveas(gcf,['current next and difference spectra.jpg']);
+saveas(gcf,[num2str(ra) 'current next and difference spectra.fig']);
+saveas(gcf,[num2str(ra) 'current next and difference spectra.jpg']);
 close all
-
+%%
 %In each max wavelength range, positive, negative, current and next
 spectra_D_pos=spectra_difference_prepare;
 spectra_D_neg=spectra_difference_prepare;
@@ -213,11 +242,11 @@ view([0 0 1]);colormap(jet);title('Current Sum')
 subplot(2,2,4);mesh(1:220,datasetfile.dataset.ccdt(:,1),normalize(spectra_next_sum,1,'range'));
 view([0 0 1]);colormap(jet);title('Next Sum')
 
-saveas(gcf,['Pos Neg current next.fig']);
-saveas(gcf,['Pos Neg current next.jpg']);
+saveas(gcf,[num2str(ra) 'Pos Neg current next.fig']);
+saveas(gcf,[num2str(ra) 'Pos Neg current next.jpg']);
 close all
-
-
+end
+%%
   function [Ordered_spectra,Spectra_order]=sort_spectrum(spectraspectrum_normalized,place)
     %compare the distance from each spectrum
     [w,s,m]=size(spectraspectrum_normalized);

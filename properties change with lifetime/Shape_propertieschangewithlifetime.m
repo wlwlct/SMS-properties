@@ -2,15 +2,15 @@
 %lifetime. %E0001 is not settled
 
 clearvars
-solvent='F8T2N2';
+solvent='F8Se2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
-srdir=['E:\F8Se2 July\' 'F8Se2O2'];
+srdir=['E:\F8T2400nmCH'];
 max_secs=200;%choose according to the max number of seconds in each files.
 
 %srdir=['E:\F8T2O2'];
 cd (srdir)
 
-allnames=struct2cell(dir( '*.mat'));
+allnames=struct2cell(dir( '*dataset*.mat'));
 [~,len]=size(allnames);
 
 Lifindexremove=[];
@@ -23,7 +23,6 @@ SecDtimeintensity=zeros(len,max_secs);
 place=22;%start to calculate wavelength
 SecDtimespectrum=zeros(100-place+1,max_secs,len);
 SecDtimespectrum_normalized=zeros(100-place+1,max_secs,len);
-
 SecDtimeShape=cell(max_secs,len);
 SecDtimeShape_bin=zeros(max_secs,len);
 
@@ -49,12 +48,15 @@ for len_i=1:1:len
         SecDtimeShape_bin(1:SecDtimeShape_leng,len_i)=cellfun(@find50,SecDtime(:,2));
         SecDtimeShape(1:SecDtimeShape_leng,len_i)=SecDtime(:,2);
         %lifetime change with int
-        [newconti_leng,~]=size(datasetfile.dataset.newconti);
-        for newconti_i=1:1:newconti_leng
-            [~,co_leng]=size(datasetfile.dataset.newconti(newconti_i).co);
-            for co_i=1:1:co_leng
-                preparemove=datasetfile.dataset.newconti(newconti_i).co(co_i).subco(1,2:end);
-                Lifindexremove=cat(2,Lifindexremove,preparemove);
+        [newconti_leng,newconti_test]=size(datasetfile.dataset.newconti);
+        %disp(['size newconti:',num2str(newconti_leng),'? ',num2str(newconti_test)])
+        if newconti_test>0
+            for newconti_i=1:1:newconti_leng
+                [~,co_leng]=size(datasetfile.dataset.newconti(newconti_i).co);
+                for co_i=1:1:co_leng
+                    preparemove=datasetfile.dataset.newconti(newconti_i).co(co_i).subco(1,2:end);
+                    Lifindexremove=cat(2,Lifindexremove,preparemove);
+                end
             end
         end
         lifetime=datasetfile.dataset.scatterplot.lifetime(:,2);
@@ -237,7 +239,7 @@ saveas(gcf,[solvent ' Spectrum (normalize then add up) change with lifetime shap
  
   
   function bin=find50(rowshape)
-    rowshape=rowshape(150:2500);
+    rowshape=rowshape(200:2500);
     intensity=sum(rowshape,2);
     norm_rowshape=rowshape./intensity;
     rowshape_leng=length(rowshape);

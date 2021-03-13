@@ -6,6 +6,8 @@
 clearvars
 solvent='F8T2N2';
 srdir=['/scratch/lwang74/PTU_spectrum_lifetime_bluehive/PTUdata/' solvent];
+srdir=['E:\F8Se2 July\' 'F8Se2N2'];
+
 %srdir=['E:\F8T2400nmCH\'];
 cd (srdir)
 
@@ -24,7 +26,7 @@ intspectrum=zeros(100-place+1,99,len);
 intspectrum_normalized=zeros(100-place+1,99,len);
 SecDtimeintensity=cell(99,len);
 edges=450:1:670;
-year='2019';
+year='2020';
 
 for len_i=1:1:len
     clear name
@@ -68,7 +70,7 @@ for len_i=1:1:len
 %         E01sum=sum(datasetfile.dataset.ccdt(36:40,3:end),1);
 %         intE0001(len_i,:)=E00sum./E01sum;
     catch
-        disp([name 'may not have length 99'])
+        disp([name ' may not have length 99'])
     end
 end
 
